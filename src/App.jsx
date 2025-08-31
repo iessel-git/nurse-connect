@@ -9,10 +9,11 @@ export default function App() {
   return (
     <div className="min-h-screen w-full bg-gray-50 text-gray-900">
       {/* --- Responsive Header/Nav --- */}
-      <header className="bg-white shadow-sm w-full">
+      <header className="bg-white shadow-sm w-full sticky top-0 z-50">
         <div className="w-full px-6 py-4 flex items-center justify-between max-w-full mx-auto">
+          {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md bg-gradient-to-tr from-teal-400 to-blue-500 flex items-center justify-center text-white font-bold">NC</div>
+            <div className="w-10 h-10 rounded-md bg-gradient-to-tr from-teal-400 to-blue-500 flex items-center justify-center text-white font-bold shadow">NC</div>
             <div>
               <h1 className="text-lg font-semibold">Nurse Connect</h1>
               <p className="text-xs text-gray-500">Connecting nurses to hospitals & homes — locally & internationally</p>
@@ -20,17 +21,21 @@ export default function App() {
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex gap-3 items-center">
-            <button onClick={() => setRoute('home')} className="text-sm hover:underline">Home</button>
-            <button onClick={() => setRoute('nurse')} className="text-sm hover:underline">For Nurses</button>
-            <button onClick={() => setRoute('employer')} className="text-sm hover:underline">For Employers</button>
-            <button onClick={() => setRoute('playbooks')} className="text-sm hover:underline">Country Playbooks</button>
-            <button onClick={() => setRoute('policies')} className="text-sm text-teal-600 font-medium">Compliance</button>
+          <nav className="hidden md:flex gap-5 items-center">
+            <button onClick={() => setRoute('home')} className="text-sm hover:text-teal-600 transition">Home</button>
+            <button onClick={() => setRoute('nurse')} className="text-sm hover:text-teal-600 transition">For Nurses</button>
+            <button onClick={() => setRoute('employer')} className="text-sm hover:text-teal-600 transition">For Employers</button>
+            <button onClick={() => setRoute('playbooks')} className="text-sm hover:text-teal-600 transition">Country Playbooks</button>
+            <button onClick={() => setRoute('policies')} className="text-sm text-teal-600 font-medium hover:underline">Compliance</button>
           </nav>
 
           {/* Mobile Hamburger */}
           <div className="md:hidden">
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 border rounded">
+            <button 
+              aria-label="Toggle mobile menu" 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+              className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+            >
               {mobileMenuOpen ? '✕' : '☰'}
             </button>
           </div>
@@ -38,12 +43,12 @@ export default function App() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <nav className="md:hidden bg-white border-t px-6 py-4 flex flex-col gap-2 w-full">
-            <button onClick={() => { setRoute('home'); setMobileMenuOpen(false); }} className="text-sm hover:underline">Home</button>
-            <button onClick={() => { setRoute('nurse'); setMobileMenuOpen(false); }} className="text-sm hover:underline">For Nurses</button>
-            <button onClick={() => { setRoute('employer'); setMobileMenuOpen(false); }} className="text-sm hover:underline">For Employers</button>
-            <button onClick={() => { setRoute('playbooks'); setMobileMenuOpen(false); }} className="text-sm hover:underline">Country Playbooks</button>
-            <button onClick={() => { setRoute('policies'); setMobileMenuOpen(false); }} className="text-sm text-teal-600 font-medium">Compliance</button>
+          <nav className="md:hidden bg-white border-t px-6 py-4 flex flex-col gap-3 w-full shadow-md animate-fadeIn">
+            <button onClick={() => { setRoute('home'); setMobileMenuOpen(false); }} className="text-sm hover:text-teal-600">Home</button>
+            <button onClick={() => { setRoute('nurse'); setMobileMenuOpen(false); }} className="text-sm hover:text-teal-600">For Nurses</button>
+            <button onClick={() => { setRoute('employer'); setMobileMenuOpen(false); }} className="text-sm hover:text-teal-600">For Employers</button>
+            <button onClick={() => { setRoute('playbooks'); setMobileMenuOpen(false); }} className="text-sm hover:text-teal-600">Country Playbooks</button>
+            <button onClick={() => { setRoute('policies'); setMobileMenuOpen(false); }} className="text-sm text-teal-600 font-medium hover:underline">Compliance</button>
           </nav>
         )}
       </header>
@@ -56,7 +61,7 @@ export default function App() {
         {route === 'policies' && <Policies onBack={() => setRoute('home')} />}
 
         {message && (
-          <div className="mt-6 p-4 rounded border-l-4 border-teal-500 bg-teal-50 text-teal-800">
+          <div className="mt-6 p-4 rounded border-l-4 border-teal-500 bg-teal-50 text-teal-800 animate-fadeIn">
             {message}
           </div>
         )}
@@ -66,20 +71,20 @@ export default function App() {
         <div className="w-full px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <h3 className="font-semibold">Nurse Connect</h3>
-            <p className="text-sm text-gray-600">Ethical international recruitment. Transparent contracts. Secure credentialing.</p>
+            <p className="text-sm text-gray-700">Ethical international recruitment. Transparent contracts. Secure credentialing.</p>
           </div>
           <div>
             <h4 className="font-medium">Quick links</h4>
-            <ul className="text-sm text-gray-600 mt-2 space-y-1">
-              <li><button onClick={() => setRoute('nurse')} className="hover:underline">For Nurses</button></li>
-              <li><button onClick={() => setRoute('employer')} className="hover:underline">For Employers</button></li>
-              <li><button onClick={() => setRoute('playbooks')} className="hover:underline">Country Playbooks</button></li>
+            <ul className="text-sm text-gray-700 mt-2 space-y-1">
+              <li><button onClick={() => setRoute('nurse')} className="hover:text-teal-600">For Nurses</button></li>
+              <li><button onClick={() => setRoute('employer')} className="hover:text-teal-600">For Employers</button></li>
+              <li><button onClick={() => setRoute('playbooks')} className="hover:text-teal-600">Country Playbooks</button></li>
             </ul>
           </div>
           <div>
             <h4 className="font-medium">Contact</h4>
-            <p className="text-sm text-gray-600 mt-2">hello@nurseconnect.example</p>
-            <p className="text-sm text-gray-600">+1 (555) 123-4567</p>
+            <p className="text-sm text-gray-700 mt-2">hello@nurseconnect.example</p>
+            <p className="text-sm text-gray-700">+1 (555) 123-4567</p>
           </div>
         </div>
         <div className="text-center text-xs text-gray-400 py-4">© {new Date().getFullYear()} Nurse Connect — All rights reserved</div>
@@ -87,6 +92,7 @@ export default function App() {
     </div>
   )
 }
+
 
 // ---------------- Supporting Components ----------------
 
@@ -255,19 +261,55 @@ function Home({ onSelect }) {
 function NurseMiniForm({ fullName, setFullName, email, setEmail, country, setCountry }) {
   return (
     <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); alert('Signup received — continue to full profile'); }}>
-      <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" />
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-      <select value={country} onChange={(e) => setCountry(e.target.value)}>
-        <option value="">Select country</option>
-        <option>United States</option>
-        <option>United Kingdom</option>
-        <option>Canada</option>
-        <option>Australia</option>
-      </select>
-      <button type="submit" className="px-4 py-2 bg-teal-600 text-white rounded">Start Application</button>
+      <div className="relative">
+        <label htmlFor="miniFullName" className="sr-only">Full Name</label>
+        <input
+          id="miniFullName"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Full Name"
+          className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          required
+        />
+      </div>
+      <div className="relative">
+        <label htmlFor="miniEmail" className="sr-only">Email</label>
+        <input
+          id="miniEmail"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          required
+        />
+      </div>
+      <div className="relative">
+        <label htmlFor="miniCountry" className="sr-only">Country</label>
+        <select
+          id="miniCountry"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          required
+        >
+          <option value="">Select country</option>
+          <option>United States</option>
+          <option>United Kingdom</option>
+          <option>Canada</option>
+          <option>Australia</option>
+        </select>
+      </div>
+      <button
+        type="submit"
+        className="w-full px-4 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition transform hover:scale-105"
+      >
+        Start Application
+      </button>
     </form>
   )
 }
+
 
 function NurseFlow({ onBack, setMessage }) {
   const [step, setStep] = useState(1)
@@ -276,64 +318,103 @@ function NurseFlow({ onBack, setMessage }) {
   const handleNext = () => setStep(step + 1)
   const handleBack = () => setStep(step - 1)
 
+  const inputClass = "w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+
   return (
     <div>
-      <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
-      <div className="bg-white p-6 rounded shadow">
+      <button onClick={onBack} className="text-sm text-gray-500 mb-4 hover:underline">← Back</button>
+      <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
         <h2 className="text-xl font-semibold">Nurse Application</h2>
-        <p className="text-sm text-gray-600 mt-1">Create a profile, upload credentials, and get matched faster.</p>
+        <p className="text-sm text-gray-700">Create a profile, upload credentials, and get matched faster.</p>
 
         <Progress steps={["Profile", "Credentials", "Preferences", "Review"]} current={step} />
 
         {step === 1 && (
           <div className="mt-4 space-y-4">
-            <label className="block text-sm">Full name</label>
-            <input value={profile.fullName} onChange={(e) => setProfile({...profile, fullName: e.target.value})} className="w-full p-2 border rounded" />
-            <label className="block text-sm">Email</label>
-            <input value={profile.email} onChange={(e) => setProfile({...profile, email: e.target.value})} className="w-full p-2 border rounded" />
-            <label className="block text-sm">Country of qualification</label>
-            <select value={profile.country} onChange={(e) => setProfile({...profile, country: e.target.value})} className="w-full p-2 border rounded">
-              <option value="">Select</option>
-              <option>United States</option>
-              <option>United Kingdom</option>
-              <option>Canada</option>
-              <option>Australia</option>
-            </select>
+            <div className="relative">
+              <label htmlFor="fullName" className="sr-only">Full name</label>
+              <input
+                id="fullName"
+                value={profile.fullName}
+                onChange={(e) => setProfile({...profile, fullName: e.target.value})}
+                className={inputClass}
+                placeholder="Full name"
+                required
+              />
+            </div>
+            <div className="relative">
+              <label htmlFor="email" className="sr-only">Email</label>
+              <input
+                id="email"
+                value={profile.email}
+                onChange={(e) => setProfile({...profile, email: e.target.value})}
+                className={inputClass}
+                placeholder="Email"
+                type="email"
+                required
+              />
+            </div>
+            <div className="relative">
+              <label htmlFor="country" className="sr-only">Country of qualification</label>
+              <select
+                id="country"
+                value={profile.country}
+                onChange={(e) => setProfile({...profile, country: e.target.value})}
+                className={inputClass}
+                required
+              >
+                <option value="">Select country</option>
+                <option>United States</option>
+                <option>United Kingdom</option>
+                <option>Canada</option>
+                <option>Australia</option>
+              </select>
+            </div>
             <div className="flex justify-end mt-4">
-              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
+              <button className="px-5 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105" onClick={handleNext}>Next</button>
             </div>
           </div>
         )}
 
         {step === 2 && (
           <div className="mt-4 space-y-4">
-            <label className="block text-sm">Upload license / registration (PDF/JPG)</label>
-            <input type="file" onChange={(e) => setProfile({...profile, licenseFile: e.target.files[0]})} />
+            <label className="block text-sm text-gray-700">Upload license / registration (PDF/JPG)</label>
+            <input
+              type="file"
+              onChange={(e) => setProfile({...profile, licenseFile: e.target.files[0]})}
+              className="w-full"
+              accept=".pdf,.jpg,.jpeg,.png"
+              required
+            />
             <div className="flex justify-between mt-4">
-              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
-              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
+              <button className="px-3 py-2 border rounded-md hover:bg-gray-100" onClick={handleBack}>Back</button>
+              <button className="px-5 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105" onClick={handleNext}>Next</button>
             </div>
           </div>
         )}
 
         {step === 3 && (
           <div className="mt-4 space-y-4">
-            <label className="block text-sm">Preferred locations</label>
+            <label className="block text-sm text-gray-700">Preferred locations</label>
             <div className="grid grid-cols-2 gap-2">
               {["United States","United Kingdom","Canada","Australia"].map(loc => (
                 <label key={loc} className="flex items-center gap-2">
-                  <input type="checkbox" checked={profile.locations.includes(loc)} 
+                  <input
+                    type="checkbox"
+                    checked={profile.locations.includes(loc)}
                     onChange={(e) => {
                       const newLocations = e.target.checked ? [...profile.locations, loc] : profile.locations.filter(l => l!==loc);
                       setProfile({...profile, locations: newLocations});
-                    }} />
+                    }}
+                    className="rounded focus:ring-2 focus:ring-teal-500"
+                  />
                   {loc}
                 </label>
               ))}
             </div>
 
-            <label className="block text-sm">Shift preferences</label>
-            <select className="w-full p-2 border rounded" value={profile.shift} onChange={(e)=>setProfile({...profile, shift: e.target.value})}>
+            <label className="block text-sm text-gray-700">Shift preferences</label>
+            <select className={inputClass} value={profile.shift} onChange={(e)=>setProfile({...profile, shift: e.target.value})} required>
               <option value="">Select shift</option>
               <option>Day</option>
               <option>Night</option>
@@ -341,16 +422,16 @@ function NurseFlow({ onBack, setMessage }) {
             </select>
 
             <div className="flex justify-between mt-4">
-              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
-              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
+              <button className="px-3 py-2 border rounded-md hover:bg-gray-100" onClick={handleBack}>Back</button>
+              <button className="px-5 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105" onClick={handleNext}>Next</button>
             </div>
           </div>
         )}
 
         {step === 4 && (
           <div className="mt-4 space-y-4">
-            <h4 className="font-semibold">Review & Submit</h4>
-            <div className="bg-gray-50 p-4 rounded text-sm space-y-2">
+            <h4 className="font-semibold text-gray-800">Review & Submit</h4>
+            <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
               <div><strong>Name:</strong> {profile.fullName}</div>
               <div><strong>Email:</strong> {profile.email}</div>
               <div><strong>Country:</strong> {profile.country}</div>
@@ -360,12 +441,17 @@ function NurseFlow({ onBack, setMessage }) {
             </div>
 
             <div className="flex justify-between mt-4">
-              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
-              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={() => {
-                setMessage('Application submitted — we will verify and match you.');
-                setStep(1);
-                setProfile({ fullName:'', email:'', country:'', licenseFile:'', locations:[], shift:'' });
-              }}>Submit</button>
+              <button className="px-3 py-2 border rounded-md hover:bg-gray-100" onClick={handleBack}>Back</button>
+              <button
+                className="px-5 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105"
+                onClick={() => {
+                  setMessage('Application submitted — we will verify and match you.');
+                  setStep(1);
+                  setProfile({ fullName:'', email:'', country:'', licenseFile:'', locations:[], shift:'' });
+                }}
+              >
+                Submit
+              </button>
             </div>
           </div>
         )}
@@ -374,23 +460,38 @@ function NurseFlow({ onBack, setMessage }) {
   )
 }
 
+
 function EmployerFlow({ onBack, setMessage }) {
   const [form, setForm] = useState({ org: '', contact: '', role: '' })
+  const inputClass = "w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+
   return (
     <div>
-      <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
-      <div className="bg-white p-6 rounded shadow">
+      <button onClick={onBack} className="text-sm text-gray-500 mb-4 hover:underline">← Back</button>
+      <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
         <h2 className="text-xl font-semibold">Employer Intake</h2>
         <form onSubmit={(e) => { e.preventDefault(); setMessage('Request received'); }} className="space-y-4 mt-4">
-          <input value={form.org} onChange={(e) => setForm({...form, org: e.target.value})} placeholder="Organization" className="w-full p-2 border rounded" />
-          <input value={form.contact} onChange={(e) => setForm({...form, contact: e.target.value})} placeholder="Contact email / phone" className="w-full p-2 border rounded" />
-          <input value={form.role} onChange={(e) => setForm({...form, role: e.target.value})} placeholder="Role & skills needed" className="w-full p-2 border rounded" />
-          <button type="submit" className="px-4 py-2 bg-teal-600 text-white rounded">Submit request</button>
+          <div className="relative">
+            <label htmlFor="org" className="sr-only">Organization</label>
+            <input id="org" value={form.org} onChange={(e) => setForm({...form, org: e.target.value})} placeholder="Organization" className={inputClass} required />
+          </div>
+          <div className="relative">
+            <label htmlFor="contact" className="sr-only">Contact email / phone</label>
+            <input id="contact" value={form.contact} onChange={(e) => setForm({...form, contact: e.target.value})} placeholder="Contact email / phone" className={inputClass} required />
+          </div>
+          <div className="relative">
+            <label htmlFor="role" className="sr-only">Role & skills needed</label>
+            <input id="role" value={form.role} onChange={(e) => setForm({...form, role: e.target.value})} placeholder="Role & skills needed" className={inputClass} required />
+          </div>
+          <button type="submit" className="w-full px-4 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105">
+            Submit request
+          </button>
         </form>
       </div>
     </div>
   )
 }
+
 
 function CountryPlaybooks({ onBack }) {
   return (
