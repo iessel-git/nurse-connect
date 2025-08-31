@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import heroImg from '../hero.png'; // <-- updated import
 import React, { useState, useEffect } from 'react';
-import NurseFlow from './NurseFlow';
-import EmployerFlow from './EmployerFlow';
+import heroImg from '../hero.png'; // <-- updated import
+// Removed duplicate imports of NurseFlow / EmployerFlow if you keep them in this file
 // other imports...
 
 // ------------------------
@@ -43,12 +41,6 @@ export function useValidation(initialValues) {
 // ------------------------
 // App Component
 // ------------------------
-function App() {
-  // your existing App logic
-}
-
-export default App;
-
 export default function App() {
   const [route, setRoute] = useState('home');
   const [message, setMessage] = useState('');
