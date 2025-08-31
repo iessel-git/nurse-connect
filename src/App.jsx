@@ -6,10 +6,10 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen w-full bg-gray-50 text-gray-900">
       {/* --- Responsive Header/Nav --- */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="bg-white shadow-sm w-full">
+        <div className="w-full px-6 py-4 flex items-center justify-between max-w-full mx-auto">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-md bg-gradient-to-tr from-teal-400 to-blue-500 flex items-center justify-center text-white font-bold">NC</div>
             <div>
@@ -37,7 +37,7 @@ export default function App() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <nav className="md:hidden bg-white border-t px-6 py-4 flex flex-col gap-2">
+          <nav className="md:hidden bg-white border-t px-6 py-4 flex flex-col gap-2 w-full">
             <button onClick={() => { setRoute('home'); setMobileMenuOpen(false); }} className="text-sm hover:underline">Home</button>
             <button onClick={() => { setRoute('nurse'); setMobileMenuOpen(false); }} className="text-sm hover:underline">For Nurses</button>
             <button onClick={() => { setRoute('employer'); setMobileMenuOpen(false); }} className="text-sm hover:underline">For Employers</button>
@@ -46,7 +46,8 @@ export default function App() {
           </nav>
         )}
       </header>
-      <main className="max-w-6xl mx-auto px-6 py-10">
+
+      <main className="w-full px-6 py-10">
         {route === 'home' && <Home onSelect={(r) => setRoute(r)} />}
         {route === 'nurse' && <NurseFlow onBack={() => setRoute('home')} setMessage={setMessage} />}
         {route === 'employer' && <EmployerFlow onBack={() => setRoute('home')} setMessage={setMessage} />}
@@ -60,8 +61,8 @@ export default function App() {
         )}
       </main>
 
-      <footer className="bg-white border-t mt-12">
-        <div className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <footer className="bg-white border-t mt-12 w-full">
+        <div className="w-full px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <h3 className="font-semibold">Nurse Connect</h3>
             <p className="text-sm text-gray-600">Ethical international recruitment. Transparent contracts. Secure credentialing.</p>
