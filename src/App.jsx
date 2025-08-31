@@ -579,120 +579,160 @@ function NurseFlow({ onBack, setMessage }) {
 
 
 
+
+
 function EmployerFlow() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
-    companyName: "",
+    name: "",
     email: "",
     password: "",
-    profile: "",
+    company: "",
+    position: "",
   });
 
+  // Handle form field updates
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const nextStep = () => setStep((prev) => prev + 1);
-  const prevStep = () => setStep((prev) => prev - 1);
+  // Validation rules for each step
+  const isStepValid = () => {
+    if (step === 1) return form.name.trim() !== "";
+    if (step === 2) return /\S+@\S+\.\S+/.test(form.email);
+    if (step === 3) return form.password.length >= 6;
+    if (step === 4) return form.company.trim() !== "";
+    if (step === 5) return form.position.trim() !== "";
+    return true;
+  };
 
   return (
-    <div className="max-w-md w-full p-6 bg-white rounded-2xl shadow-md">
+    <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
+      <h2 className="text-2xl font-bold mb-4 text-center">Employer Sign Up</h2>
+
+      {/* Step 1 - Name */}
       {step === 1 && (
         <div>
-          <h2 className="text-xl font-semibold mb-4">Employer Signup</h2>
+          <label className="block mb-2">Full Name</label>
           <input
             type="text"
-            name="companyName"
-            placeholder="Company Name"
-            value={form.companyName}
+            name="name"
+            value={form.name}
             onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
+            placeholder="Enter your full name"
+            className="w-full border rounded p-2"
           />
+        </div>
+      )}
+
+      {/* Step 2 - Email */}
+      {step === 2 && (
+        <div>
+          <label className="block mb-2">Email</label>
           <input
             type="email"
             name="email"
-            placeholder="Email"
             value={form.email}
             onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
+            placeholder="Enter your email"
+            className="w-full border rounded p-2"
           />
+        </div>
+      )}
+
+      {/* Step 3 - Password */}
+      {step === 3 && (
+        <div>
+          <label className="block mb-2">Password</label>
           <input
             type="password"
             name="password"
-            placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
+            placeholder="Enter a password (min 6 characters)"
+            className="w-full border rounded p-2"
           />
+        </div>
+      )}
+
+      {/* Step 4 - Company */}
+      {step === 4 && (
+        <div>
+          <label className="block mb-2">Company</label>
+          <input
+            type="text"
+            name="company"
+            value={form.company}
+            onChange={handleChange}
+            placeholder="Enter company name"
+            className="w-full border rounded p-2"
+          />
+        </div>
+      )}
+
+      {/* Step 5 - Position */}
+      {step === 5 && (
+        <div>
+          <label className="block mb-2">Position</label>
+          <input
+            type="text"
+            name="position"
+            value={form.position}
+            onChange={handleChange}
+            placeholder="Enter your position"
+            className="w-full border rounded p-2"
+          />
+        </div>
+      )}
+
+      {/* Step 6 - Review */}
+      {step === 6 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Review Your Info</h3>
+          <ul className="mb-4">
+            <li><strong>Name:</strong> {form.name}</li>
+            <li><strong>Email:</strong> {form.email}</li>
+            <li><strong>Password:</strong> ******</li>
+            <li><strong>Company:</strong> {form.company}</li>
+            <li><strong>Position:</strong> {form.position}</li>
+          </ul>
           <button
-            onClick={nextStep}
-            disabled={!form.companyName || !form.email || !form.password}
-            className="w-full bg-blue-600 text-white py-2 rounded disabled:opacity-50"
+            onClick={() => alert("Employer Registration Submitted!")}
+            className="w-full bg-green-600 text-white p-2 rounded"
           >
-            Next
+            Submit
           </button>
         </div>
       )}
 
-      {step === 2 && (
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Company Profile</h2>
-          <textarea
-            name="profile"
-            placeholder="Describe your company..."
-            value={form.profile}
-            onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
-          />
-          <div className="flex justify-between">
-            <button
-              onClick={prevStep}
-              className="px-4 py-2 bg-gray-300 rounded"
-            >
-              Back
-            </button>
-            <button
-              onClick={nextStep}
-              disabled={!form.profile}
-              className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Review</h2>
-          <p>
-            <strong>Company:</strong> {form.companyName}
-          </p>
-          <p>
-            <strong>Email:</strong> {form.email}
-          </p>
-          <p>
-            <strong>Password:</strong> {form.password.replace(/./g, "*")}
-          </p>
-          <p>
-            <strong>Profile:</strong> {form.profile}
-          </p>
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="px-4 py-2 bg-gray-300 rounded"
-            >
-              Back
-            </button>
-            <button className="px-4 py-2 bg-green-600 text-white rounded">
-              Submit
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Navigation */}
+      <div className="flex justify-between mt-4">
+        {step > 1 && step < 6 && (
+          <button
+            onClick={() => setStep(step - 1)}
+            className="bg-gray-300 px-4 py-2 rounded"
+          >
+            Back
+          </button>
+        )}
+        {step < 6 && (
+          <button
+            onClick={() => setStep(step + 1)}
+            disabled={!isStepValid()}
+            className={`px-4 py-2 rounded ${
+              isStepValid()
+                ? "bg-blue-600 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            Next
+          </button>
+        )}
+      </div>
     </div>
   );
 }
+
 
 
 function CountryPlaybooks({ onBack }) {
