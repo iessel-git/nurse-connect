@@ -111,20 +111,104 @@ function NurseMiniForm({ fullName, setFullName, email, setEmail, country, setCou
 
 function NurseFlow({ onBack, setMessage }) {
   const [step, setStep] = useState(1)
-  const [profile, setProfile] = useState({ fullName: '', email: '', country: '', license: '' })
+  const [profile, setProfile] = useState({ fullName: '', email: '', country: '', licenseFile: '', locations: [], shift: '' })
+
+  const handleNext = () => setStep(step + 1)
+  const handleBack = () => setStep(step - 1)
 
   return (
     <div>
       <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
       <div className="bg-white p-6 rounded shadow">
         <h2 className="text-xl font-semibold">Nurse Application</h2>
+        <p className="text-sm text-gray-600 mt-1">Create a profile, upload credentials, and get matched faster.</p>
+
         <Progress steps={["Profile", "Credentials", "Preferences", "Review"]} current={step} />
-        {/* Multi-step form goes here */}
-        <div className="mt-4 flex justify-between">
-          {step > 1 && <button className="px-3 py-2 border rounded" onClick={() => setStep(step-1)}>Back</button>}
-          {step < 4 && <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={() => setStep(step+1)}>Next</button>}
-          {step === 4 && <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={() => { setMessage('Application submitted'); setStep(1); }}>Submit</button>}
-        </div>
+
+        {step === 1 && (
+          <div className="mt-4 space-y-4">
+            <label className="block text-sm">Full name</label>
+            <input value={profile.fullName} onChange={(e) => setProfile({...profile, fullName: e.target.value})} className="w-full p-2 border rounded" />
+            <label className="block text-sm">Email</label>
+            <input value={profile.email} onChange={(e) => setProfile({...profile, email: e.target.value})} className="w-full p-2 border rounded" />
+            <label className="block text-sm">Country of qualification</label>
+            <select value={profile.country} onChange={(e) => setProfile({...profile, country: e.target.value})} className="w-full p-2 border rounded">
+              <option value="">Select</option>
+              <option>United States</option>
+              <option>United Kingdom</option>
+              <option>Canada</option>
+              <option>Australia</option>
+            </select>
+            <div className="flex justify-end mt-4">
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="mt-4 space-y-4">
+            <label className="block text-sm">Upload license / registration (PDF/JPG)</label>
+            <input type="file" onChange={(e) => setProfile({...profile, licenseFile: e.target.files[0]})} />
+            <div className="flex justify-between mt-4">
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="mt-4 space-y-4">
+            <label className="block text-sm">Preferred locations</label>
+            <div className="grid grid-cols-2 gap-2">
+              {["United States","United Kingdom","Canada","Australia"].map(loc => (
+                <label key={loc} className="flex items-center gap-2">
+                  <input type="checkbox" checked={profile.locations.includes(loc)} 
+                    onChange={(e) => {
+                      const newLocations = e.target.checked ? [...profile.locations, loc] : profile.locations.filter(l => l!==loc);
+                      setProfile({...profile, locations: newLocations});
+                    }} />
+                  {loc}
+                </label>
+              ))}
+            </div>
+
+            <label className="block text-sm">Shift preferences</label>
+            <select className="w-full p-2 border rounded" value={profile.shift} onChange={(e)=>setProfile({...profile, shift: e.target.value})}>
+              <option value="">Select shift</option>
+              <option>Day</option>
+              <option>Night</option>
+              <option>Any</option>
+            </select>
+
+            <div className="flex justify-between mt-4">
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="mt-4 space-y-4">
+            <h4 className="font-semibold">Review & Submit</h4>
+            <div className="bg-gray-50 p-4 rounded text-sm space-y-2">
+              <div><strong>Name:</strong> {profile.fullName}</div>
+              <div><strong>Email:</strong> {profile.email}</div>
+              <div><strong>Country:</strong> {profile.country}</div>
+              <div><strong>Locations:</strong> {profile.locations.join(", ")}</div>
+              <div><strong>Shift:</strong> {profile.shift}</div>
+              <div><strong>License File:</strong> {profile.licenseFile ? profile.licenseFile.name : "None"}</div>
+            </div>
+
+            <div className="flex justify-between mt-4">
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={() => {
+                setMessage('Application submitted — we will verify and match you.');
+                setStep(1);
+                setProfile({ fullName:'', email:'', country:'', licenseFile:'', locations:[], shift:'' });
+              }}>Submit</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -199,7 +283,7 @@ function Policies({ onBack }) {
 
 function Progress({ steps, current }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 my-4">
       {steps.map((s, i) => (
         <div key={s} className="flex items-center gap-2">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center ${i+1 <= current ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'}`}>{i+1}</div>
