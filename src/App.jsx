@@ -1,5 +1,53 @@
 import React, { useState } from 'react';
 import heroImg from '../hero.png'; // <-- updated import
+import React, { useState, useEffect } from 'react';
+import NurseFlow from './NurseFlow';
+import EmployerFlow from './EmployerFlow';
+// other imports...
+
+// ------------------------
+// Custom Hook
+// ------------------------
+export function useValidation(initialValues) {
+  const [values, setValues] = useState(initialValues);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  const validators = {
+    fullName: v => v.trim() ? '' : 'Required',
+    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Invalid email',
+    country: v => v ? '' : 'Required',
+    org: v => v.trim() ? '' : 'Required',
+    contact: v => v.trim() ? '' : 'Required',
+    role: v => v.trim() ? '' : 'Required',
+  };
+
+  useEffect(() => {
+    const newErrors = {};
+    for (const field in values) {
+      if (validators[field]) newErrors[field] = validators[field](values[field]);
+    }
+    setErrors(newErrors);
+  }, [values]);
+
+  const handleChange = (field, value) => {
+    setValues({ ...values, [field]: value });
+    setTouched({ ...touched, [field]: true });
+  };
+
+  const isValid = Object.values(errors).every(e => e === '');
+
+  return { values, errors, touched, handleChange, isValid, setValues };
+}
+
+// ------------------------
+// App Component
+// ------------------------
+function App() {
+  // your existing App logic
+}
+
+export default App;
 
 export default function App() {
   const [route, setRoute] = useState('home');
@@ -258,163 +306,165 @@ function Home({ onSelect }) {
 }
 
 
-function NurseMiniForm({ fullName, setFullName, email, setEmail, country, setCountry }) {
+function NurseMiniForm({ onSubmit }) {
+  const { values, errors, touched, handleChange, isValid } = useValidation({
+    fullName: '',
+    email: '',
+    country: ''
+  });
+
   return (
-    <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); alert('Signup received — continue to full profile'); }}>
-      <div className="relative">
-        <label htmlFor="miniFullName" className="sr-only">Full Name</label>
-        <input
-          id="miniFullName"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Full Name"
-          className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-          required
-        />
-      </div>
-      <div className="relative">
-        <label htmlFor="miniEmail" className="sr-only">Email</label>
-        <input
-          id="miniEmail"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-          required
-        />
-      </div>
-      <div className="relative">
-        <label htmlFor="miniCountry" className="sr-only">Country</label>
-        <select
-          id="miniCountry"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-          required
-        >
-          <option value="">Select country</option>
-          <option>United States</option>
-          <option>United Kingdom</option>
-          <option>Canada</option>
-          <option>Australia</option>
-        </select>
-      </div>
+    <form
+      className="space-y-3"
+      onSubmit={(e) => { e.preventDefault(); if (isValid) onSubmit(values); }}
+    >
+      {['fullName','email','country'].map(field => (
+        <div key={field} className="relative">
+          {field !== 'country' ? (
+            <input
+              type={field==='email' ? 'email' : 'text'}
+              value={values[field]}
+              onChange={(e) => handleChange(field, e.target.value)}
+              placeholder={field==='fullName' ? 'Full Name' : 'Email'}
+              className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 transition
+                ${touched[field] && errors[field] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'}`}
+            />
+          ) : (
+            <select
+              value={values[field]}
+              onChange={(e) => handleChange(field, e.target.value)}
+              className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 transition
+                ${touched[field] && errors[field] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'}`}
+            >
+              <option value="">Select country</option>
+              <option>United States</option>
+              <option>United Kingdom</option>
+              <option>Canada</option>
+              <option>Australia</option>
+            </select>
+          )}
+
+          {touched[field] && (
+            <span className="absolute right-3 top-3 text-lg">{errors[field] ? '❌' : '✅'}</span>
+          )}
+        </div>
+      ))}
+
       <button
         type="submit"
-        className="w-full px-4 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition transform hover:scale-105"
+        disabled={!isValid}
+        className={`w-full px-4 py-3 rounded-md font-medium transition transform hover:scale-105
+          ${isValid ? 'bg-teal-600 text-white hover:bg-teal-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
       >
         Start Application
       </button>
     </form>
-  )
+  );
 }
 
 
 function NurseFlow({ onBack, setMessage }) {
-  const [step, setStep] = useState(1)
-  const [profile, setProfile] = useState({ fullName: '', email: '', country: '', licenseFile: '', locations: [], shift: '' })
+  const steps = ["Profile", "Credentials", "Preferences", "Review"];
+  const [step, setStep] = useState(1);
 
-  const handleNext = () => setStep(step + 1)
-  const handleBack = () => setStep(step - 1)
+  const { values, errors, touched, handleChange, isValid, setValues } = useValidation({
+    fullName: '',
+    email: '',
+    country: '',
+    locations: [],
+    shift: '',
+    licenseFile: null,
+  });
 
-  const inputClass = "w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+  const handleNext = () => setStep(step + 1);
+  const handleBack = () => setStep(step - 1);
+
+  const handleFileChange = (e) => {
+    handleChange('licenseFile', e.target.files[0]);
+  };
 
   return (
     <div>
-      <button onClick={onBack} className="text-sm text-gray-500 mb-4 hover:underline">← Back</button>
-      <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
+      <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
+      <div className="bg-white p-6 rounded shadow">
         <h2 className="text-xl font-semibold">Nurse Application</h2>
-        <p className="text-sm text-gray-700">Create a profile, upload credentials, and get matched faster.</p>
+        <p className="text-sm text-gray-600 mt-1">Create a profile, upload credentials, and get matched faster.</p>
 
-        <Progress steps={["Profile", "Credentials", "Preferences", "Review"]} current={step} />
+        <Progress steps={steps} current={step} />
 
         {step === 1 && (
           <div className="mt-4 space-y-4">
-            <div className="relative">
-              <label htmlFor="fullName" className="sr-only">Full name</label>
-              <input
-                id="fullName"
-                value={profile.fullName}
-                onChange={(e) => setProfile({...profile, fullName: e.target.value})}
-                className={inputClass}
-                placeholder="Full name"
-                required
-              />
-            </div>
-            <div className="relative">
-              <label htmlFor="email" className="sr-only">Email</label>
-              <input
-                id="email"
-                value={profile.email}
-                onChange={(e) => setProfile({...profile, email: e.target.value})}
-                className={inputClass}
-                placeholder="Email"
-                type="email"
-                required
-              />
-            </div>
-            <div className="relative">
-              <label htmlFor="country" className="sr-only">Country of qualification</label>
-              <select
-                id="country"
-                value={profile.country}
-                onChange={(e) => setProfile({...profile, country: e.target.value})}
-                className={inputClass}
-                required
-              >
-                <option value="">Select country</option>
-                <option>United States</option>
-                <option>United Kingdom</option>
-                <option>Canada</option>
-                <option>Australia</option>
-              </select>
-            </div>
+            {['fullName','email','country'].map(field => (
+              <div key={field} className="relative">
+                {field !== 'country' ? (
+                  <input
+                    type={field==='email' ? 'email' : 'text'}
+                    value={values[field]}
+                    onChange={(e)=>handleChange(field, e.target.value)}
+                    placeholder={field==='fullName'?'Full Name':'Email'}
+                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 transition
+                      ${touched[field] && errors[field] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'}`}
+                  />
+                ) : (
+                  <select
+                    value={values[field]}
+                    onChange={(e)=>handleChange(field, e.target.value)}
+                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 transition
+                      ${touched[field] && errors[field] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'}`}
+                  >
+                    <option value="">Select</option>
+                    <option>United States</option>
+                    <option>United Kingdom</option>
+                    <option>Canada</option>
+                    <option>Australia</option>
+                  </select>
+                )}
+                {touched[field] && <span className="absolute right-3 top-2 text-lg">{errors[field]?'❌':'✅'}</span>}
+              </div>
+            ))}
             <div className="flex justify-end mt-4">
-              <button className="px-5 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105" onClick={handleNext}>Next</button>
+              <button
+                disabled={!isValid}
+                className={`px-4 py-2 rounded font-medium ${isValid?'bg-teal-600 text-white':'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                onClick={handleNext}
+              >Next</button>
             </div>
           </div>
         )}
 
         {step === 2 && (
           <div className="mt-4 space-y-4">
-            <label className="block text-sm text-gray-700">Upload license / registration (PDF/JPG)</label>
-            <input
-              type="file"
-              onChange={(e) => setProfile({...profile, licenseFile: e.target.files[0]})}
-              className="w-full"
-              accept=".pdf,.jpg,.jpeg,.png"
-              required
-            />
+            <label className="block text-sm">Upload license / registration (PDF/JPG)</label>
+            <input type="file" onChange={handleFileChange} className="w-full" />
+            {touched.licenseFile && errors.licenseFile && <p className="text-red-500 text-sm">{errors.licenseFile}</p>}
             <div className="flex justify-between mt-4">
-              <button className="px-3 py-2 border rounded-md hover:bg-gray-100" onClick={handleBack}>Back</button>
-              <button className="px-5 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105" onClick={handleNext}>Next</button>
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
             </div>
           </div>
         )}
 
         {step === 3 && (
           <div className="mt-4 space-y-4">
-            <label className="block text-sm text-gray-700">Preferred locations</label>
+            <label className="block text-sm">Preferred locations</label>
             <div className="grid grid-cols-2 gap-2">
               {["United States","United Kingdom","Canada","Australia"].map(loc => (
                 <label key={loc} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={profile.locations.includes(loc)}
+                  <input type="checkbox" checked={values.locations.includes(loc)}
                     onChange={(e) => {
-                      const newLocations = e.target.checked ? [...profile.locations, loc] : profile.locations.filter(l => l!==loc);
-                      setProfile({...profile, locations: newLocations});
+                      const newLocations = e.target.checked
+                        ? [...values.locations, loc]
+                        : values.locations.filter(l=>l!==loc);
+                      handleChange('locations', newLocations);
                     }}
-                    className="rounded focus:ring-2 focus:ring-teal-500"
                   />
                   {loc}
                 </label>
               ))}
             </div>
 
-            <label className="block text-sm text-gray-700">Shift preferences</label>
-            <select className={inputClass} value={profile.shift} onChange={(e)=>setProfile({...profile, shift: e.target.value})} required>
+            <label className="block text-sm">Shift preferences</label>
+            <select value={values.shift} onChange={(e)=>handleChange('shift', e.target.value)} className="w-full p-2 border rounded">
               <option value="">Select shift</option>
               <option>Day</option>
               <option>Night</option>
@@ -422,68 +472,72 @@ function NurseFlow({ onBack, setMessage }) {
             </select>
 
             <div className="flex justify-between mt-4">
-              <button className="px-3 py-2 border rounded-md hover:bg-gray-100" onClick={handleBack}>Back</button>
-              <button className="px-5 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105" onClick={handleNext}>Next</button>
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
             </div>
           </div>
         )}
 
         {step === 4 && (
           <div className="mt-4 space-y-4">
-            <h4 className="font-semibold text-gray-800">Review & Submit</h4>
-            <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
-              <div><strong>Name:</strong> {profile.fullName}</div>
-              <div><strong>Email:</strong> {profile.email}</div>
-              <div><strong>Country:</strong> {profile.country}</div>
-              <div><strong>Locations:</strong> {profile.locations.join(", ")}</div>
-              <div><strong>Shift:</strong> {profile.shift}</div>
-              <div><strong>License File:</strong> {profile.licenseFile ? profile.licenseFile.name : "None"}</div>
+            <h4 className="font-semibold">Review & Submit</h4>
+            <div className="bg-gray-50 p-4 rounded text-sm space-y-2">
+              <div><strong>Name:</strong> {values.fullName}</div>
+              <div><strong>Email:</strong> {values.email}</div>
+              <div><strong>Country:</strong> {values.country}</div>
+              <div><strong>Locations:</strong> {values.locations.join(", ")}</div>
+              <div><strong>Shift:</strong> {values.shift}</div>
+              <div><strong>License File:</strong> {values.licenseFile ? values.licenseFile.name : "None"}</div>
             </div>
 
             <div className="flex justify-between mt-4">
-              <button className="px-3 py-2 border rounded-md hover:bg-gray-100" onClick={handleBack}>Back</button>
-              <button
-                className="px-5 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105"
-                onClick={() => {
-                  setMessage('Application submitted — we will verify and match you.');
-                  setStep(1);
-                  setProfile({ fullName:'', email:'', country:'', licenseFile:'', locations:[], shift:'' });
-                }}
-              >
-                Submit
-              </button>
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={() => {
+                setMessage('Application submitted — we will verify and match you.');
+                setStep(1);
+                setValues({ fullName:'', email:'', country:'', locations:[], shift:'', licenseFile:null });
+              }}>Submit</button>
             </div>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
 
 
+
 function EmployerFlow({ onBack, setMessage }) {
-  const [form, setForm] = useState({ org: '', contact: '', role: '' })
-  const inputClass = "w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+  const { values, errors, touched, handleChange, isValid } = useValidation({
+    org: '',
+    contact: '',
+    role: ''
+  });
 
   return (
     <div>
-      <button onClick={onBack} className="text-sm text-gray-500 mb-4 hover:underline">← Back</button>
-      <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
+      <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
+      <div className="bg-white p-6 rounded shadow">
         <h2 className="text-xl font-semibold">Employer Intake</h2>
-        <form onSubmit={(e) => { e.preventDefault(); setMessage('Request received'); }} className="space-y-4 mt-4">
-          <div className="relative">
-            <label htmlFor="org" className="sr-only">Organization</label>
-            <input id="org" value={form.org} onChange={(e) => setForm({...form, org: e.target.value})} placeholder="Organization" className={inputClass} required />
-          </div>
-          <div className="relative">
-            <label htmlFor="contact" className="sr-only">Contact email / phone</label>
-            <input id="contact" value={form.contact} onChange={(e) => setForm({...form, contact: e.target.value})} placeholder="Contact email / phone" className={inputClass} required />
-          </div>
-          <div className="relative">
-            <label htmlFor="role" className="sr-only">Role & skills needed</label>
-            <input id="role" value={form.role} onChange={(e) => setForm({...form, role: e.target.value})} placeholder="Role & skills needed" className={inputClass} required />
-          </div>
-          <button type="submit" className="w-full px-4 py-3 bg-teal-600 text-white rounded-md font-medium hover:bg-teal-700 transition transform hover:scale-105">
+        <form onSubmit={(e)=>{e.preventDefault(); if(isValid) setMessage('Request received');}} className="space-y-4 mt-4">
+          {['org','contact','role'].map(field => (
+            <div key={field} className="relative">
+              <input
+                value={values[field]}
+                onChange={(e)=>handleChange(field, e.target.value)}
+                placeholder={
+                  field==='org'?'Organization':
+                  field==='contact'?'Contact email / phone':'Role & skills needed'
+                }
+                className={`w-full p-2 border rounded focus:outline-none focus:ring-2 transition
+                  ${touched[field] && errors[field] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'}`}
+              />
+              {touched[field] && <span className="absolute right-2 top-2 text-lg">{errors[field]?'❌':'✅'}</span>}
+            </div>
+          ))}
+          <button type="submit" disabled={!isValid} className={`px-4 py-2 rounded font-medium w-full
+            ${isValid?'bg-teal-600 text-white hover:bg-teal-700':'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+          >
             Submit request
           </button>
         </form>
@@ -491,6 +545,7 @@ function EmployerFlow({ onBack, setMessage }) {
     </div>
   )
 }
+
 
 
 function CountryPlaybooks({ onBack }) {
