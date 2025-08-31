@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import heroImg from '../hero.png'; // <-- updated import
 
 export default function App() {
   const [route, setRoute] = useState('home');
@@ -97,51 +98,60 @@ function Home({ onSelect }) {
   return (
     <div className="w-full">
       {/* -------- Hero Section -------- */}
-      <section className="relative w-full h-screen">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1588776814546-6d10a9a2e39e?auto=format&fit=crop&w=1950&q=80"
-            alt="Healthcare hero"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/50"></div>
-        </div>
+    {/* -------- Hero Section with Curved Bottom -------- */}
+<section className="relative w-full h-screen">
+  <div className="absolute inset-0">
+    <img
+      src={heroImg}
+      alt="Healthcare hero"
+      className="w-full h-full object-cover"
+    />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/50"></div>
+  </div>
 
-        <div className="relative z-10 flex flex-col justify-center items-start h-full max-w-6xl mx-auto px-6">
-          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
-            Connecting Nurses <br /> to Opportunities Worldwide
-          </h1>
-          <p className="mt-4 text-white text-lg md:text-xl max-w-xl">
-            Licensed, vetted nurses matched to hospitals and patients across the US, UK, Canada, and Australia — fast, transparent, and secure.
-          </p>
-          <div className="mt-6 flex flex-col md:flex-row gap-4">
-            <button
-              onClick={() => onSelect('nurse')}
-              className="px-6 py-3 bg-teal-600 text-white rounded-lg font-medium shadow hover:bg-teal-700 transition"
-            >
-              I’m a Nurse — Apply
-            </button>
-            <button
-              onClick={() => onSelect('employer')}
-              className="px-6 py-3 border border-white text-white rounded-lg font-medium hover:bg-white hover:text-teal-600 transition"
-            >
-              I’m an Employer — Hire
-            </button>
-          </div>
+  <div className="relative z-10 flex flex-col justify-center items-start h-full max-w-6xl mx-auto px-6 animate-fadeIn">
+    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white leading-snug drop-shadow-lg">
+      Connecting Nurses <br /> to Opportunities Worldwide
+    </h1>
+    <p className="mt-4 text-white text-base sm:text-lg md:text-xl max-w-xl drop-shadow-md">
+      Licensed, vetted nurses matched to hospitals and patients across the US, UK, Canada, and Australia — fast, transparent, and secure.
+    </p>
+    <div className="mt-6 flex flex-col md:flex-row gap-4">
+      <button
+        onClick={() => onSelect('nurse')}
+        className="px-6 py-3 bg-teal-600 text-white rounded-lg font-medium shadow-lg hover:bg-teal-700 transition transform hover:scale-105"
+      >
+        I’m a Nurse — Apply
+      </button>
+      <button
+        onClick={() => onSelect('employer')}
+        className="px-6 py-3 border border-white text-white rounded-lg font-medium hover:bg-white hover:text-teal-600 transition transform hover:scale-105"
+      >
+        I’m an Employer — Hire
+      </button>
+    </div>
 
-          <div className="mt-10 w-full md:w-96 bg-white rounded-lg p-6 shadow-lg">
-            <h3 className="font-semibold text-gray-700 mb-4">Quick Nurse Signup</h3>
-            <NurseMiniForm
-              fullName={fullName}
-              setFullName={setFullName}
-              email={email}
-              setEmail={setEmail}
-              country={country}
-              setCountry={setCountry}
-            />
-          </div>
-        </div>
-      </section>
+    <div className="mt-10 w-full md:w-96 bg-white rounded-lg p-6 shadow-lg">
+      <h3 className="font-semibold text-gray-700 mb-4">Quick Nurse Signup</h3>
+      <NurseMiniForm
+        fullName={fullName}
+        setFullName={setFullName}
+        email={email}
+        setEmail={setEmail}
+        country={country}
+        setCountry={setCountry}
+      />
+    </div>
+  </div>
+
+  {/* SVG Curve at bottom */}
+  <div className="absolute bottom-0 w-full overflow-hidden leading-[0]">
+    <svg className="relative block w-full h-20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1200 120">
+      <path d="M0,0 C600,120 600,0 1200,120 L1200,0 L0,0 Z" fill="white" />
+    </svg>
+  </div>
+</section>
+
 
       {/* -------- Features / Stats Section -------- */}
       <section className="py-20 bg-gray-50">
