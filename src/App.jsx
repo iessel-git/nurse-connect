@@ -698,7 +698,9 @@ function EmployerFlow({ onBack, setMessage }) {
               >Next</button>
             </div>
           </div>
-        )}
+        );
+        }
+        
 
        
 
