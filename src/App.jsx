@@ -41,7 +41,7 @@ export function useValidation(initialValues) {
 // ------------------------
 // App Component
 // ------------------------
-export default function App() {
+function App() {
   const [route, setRoute] = useState('home');
   const [message, setMessage] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -132,6 +132,10 @@ export default function App() {
     </div>
   )
 }
+
+export default App;
+
+// ---------------- Supporting Components ----------------
 
 
 // ---------------- Supporting Components ----------------
