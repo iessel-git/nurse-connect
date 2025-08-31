@@ -629,8 +629,21 @@ function EmployerFlow({ onBack, setMessage }) {
     setErrors({ ...errors, [field]: validateField(field, value) });
   };
 
-  const isValid = Object.values(errors).every(e=>!e) &&
-                  ["org","contact","password","country","roles"].every(f=>values[f]);
+  // ✅ Step-specific validation
+  const isStepValid = () => {
+    if (step === 1) {
+      return (
+        !errors.org && values.org &&
+        !errors.contact && values.contact &&
+        !errors.password && values.password &&
+        !errors.country && values.country
+      );
+    }
+    if (step === 2) {
+      return !errors.roles && values.roles;
+    }
+    return true;
+  };
 
   const handleNext = () => setStep(step+1);
   const handleBack = () => setStep(step-1);
@@ -680,8 +693,8 @@ function EmployerFlow({ onBack, setMessage }) {
               </div>
             ))}
             <div className="flex justify-end mt-4">
-              <button disabled={!isValid} onClick={handleNext}
-                className={`px-4 py-2 rounded font-medium ${isValid?"bg-teal-600 text-white":"bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+              <button disabled={!isStepValid()} onClick={handleNext}
+                className={`px-4 py-2 rounded font-medium ${isStepValid()?"bg-teal-600 text-white":"bg-gray-300 text-gray-500 cursor-not-allowed"}`}
               >Next</button>
             </div>
           </div>
@@ -719,7 +732,7 @@ function EmployerFlow({ onBack, setMessage }) {
 
             <div className="flex justify-between mt-4">
               <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
-              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
+              <button disabled={!isStepValid()} className={`px-4 py-2 rounded ${isStepValid()?"bg-teal-600 text-white":"bg-gray-300 text-gray-500 cursor-not-allowed"}`} onClick={handleNext}>Next</button>
             </div>
           </div>
         )}
