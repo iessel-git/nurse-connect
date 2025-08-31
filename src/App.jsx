@@ -357,101 +357,160 @@ function NurseMiniForm({ onSubmit }) {
     </form>
   );
 }
-
+import React, { useState } from "react";
 
 function NurseFlow({ onBack, setMessage }) {
   const steps = ["Profile", "Credentials", "Preferences", "Review"];
   const [step, setStep] = useState(1);
 
-  const { values, errors, touched, handleChange, isValid, setValues } = useValidation({
-    fullName: '',
-    email: '',
-    country: '',
+  const [values, setValues] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    country: "",
     locations: [],
-    shift: '',
+    shift: "",
     licenseFile: null,
   });
 
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  // Password strength check
+  const getPasswordStrength = (password) => {
+    if (!password) return "";
+    if (password.length < 6) return "Weak";
+    if (password.match(/[A-Z]/) && password.match(/\d/) && password.length >= 8) return "Strong";
+    return "Medium";
+  };
+
+  const validateField = (field, value) => {
+    let error = "";
+    switch (field) {
+      case "fullName":
+        if (!value.trim()) error = "Full Name is required";
+        break;
+      case "email":
+        if (!value.trim()) error = "Email is required";
+        else if (!/^\S+@\S+\.\S+$/.test(value)) error = "Invalid email";
+        break;
+      case "password":
+        if (!value) error = "Password is required";
+        else if (value.length < 6) error = "Password must be at least 6 characters";
+        break;
+      case "country":
+        if (!value) error = "Country is required";
+        break;
+      case "licenseFile":
+        if (!value) error = "License file is required";
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
+  const handleChange = (field, value) => {
+    setValues({ ...values, [field]: value });
+    setTouched({ ...touched, [field]: true });
+    setErrors({ ...errors, [field]: validateField(field, value) });
+  };
+
+  const isValid =
+    Object.values(errors).every((e) => !e) &&
+    ["fullName", "email", "password", "country"].every((f) => values[f]);
+
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);
-
-  const handleFileChange = (e) => {
-    handleChange('licenseFile', e.target.files[0]);
-  };
+  const handleFileChange = (e) => handleChange("licenseFile", e.target.files[0]);
 
   return (
     <div>
-      <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
-      <div className="bg-white p-6 rounded shadow">
+      {onBack && <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>}
+      <div className="bg-white p-6 rounded shadow max-w-md mx-auto">
         <h2 className="text-xl font-semibold">Nurse Application</h2>
         <p className="text-sm text-gray-600 mt-1">Create a profile, upload credentials, and get matched faster.</p>
 
-        <Progress steps={steps} current={step} />
+        {/* Progress */}
+        <div className="flex justify-between mt-4 mb-6">
+          {steps.map((s, i) => (
+            <div key={s} className={`flex-1 text-center ${step === i+1 ? "font-bold" : "text-gray-400"}`}>{s}</div>
+          ))}
+        </div>
 
+        {/* Step 1: Profile */}
         {step === 1 && (
-          <div className="mt-4 space-y-4">
-            {['fullName','email','country'].map(field => (
+          <div className="space-y-4">
+            {["fullName","email","password","country"].map((field) => (
               <div key={field} className="relative">
-                {field !== 'country' ? (
+                {field !== "country" ? (
                   <input
-                    type={field==='email' ? 'email' : 'text'}
+                    type={field==="password" ? "password" : (field==="email" ? "email" : "text")}
                     value={values[field]}
-                    onChange={(e)=>handleChange(field, e.target.value)}
-                    placeholder={field==='fullName'?'Full Name':'Email'}
+                    onChange={(e) => handleChange(field, e.target.value)}
+                    placeholder={field==="fullName" ? "Full Name" : field==="email" ? "Email" : "Password"}
                     className={`w-full p-2 border rounded focus:outline-none focus:ring-2 transition
-                      ${touched[field] && errors[field] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'}`}
+                      ${touched[field] && errors[field] ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"}`}
                   />
                 ) : (
                   <select
-                    value={values[field]}
-                    onChange={(e)=>handleChange(field, e.target.value)}
+                    value={values.country}
+                    onChange={(e) => handleChange("country", e.target.value)}
                     className={`w-full p-2 border rounded focus:outline-none focus:ring-2 transition
-                      ${touched[field] && errors[field] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'}`}
+                      ${touched.country && errors.country ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"}`}
                   >
-                    <option value="">Select</option>
+                    <option value="">Select Country</option>
                     <option>United States</option>
                     <option>United Kingdom</option>
                     <option>Canada</option>
                     <option>Australia</option>
                   </select>
                 )}
-                {touched[field] && <span className="absolute right-3 top-2 text-lg">{errors[field]?'❌':'✅'}</span>}
+                {touched[field] && <span className="absolute right-3 top-2 text-lg">{errors[field] ? "❌" : "✅"}</span>}
+                {field==="password" && values.password && (
+                  <p className="text-xs mt-1">Strength: <strong>{getPasswordStrength(values.password)}</strong></p>
+                )}
               </div>
             ))}
             <div className="flex justify-end mt-4">
               <button
                 disabled={!isValid}
-                className={`px-4 py-2 rounded font-medium ${isValid?'bg-teal-600 text-white':'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                onClick={handleNext}
+                className={`px-4 py-2 rounded font-medium ${isValid ? "bg-teal-600 text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+              >Next</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Credentials */}
+        {step === 2 && (
+          <div className="space-y-4">
+            <label className="block text-sm">Upload license / registration (PDF/JPG)</label>
+            <input type="file" onChange={handleFileChange} className="w-full" />
+            {touched.licenseFile && errors.licenseFile && <p className="text-red-500 text-sm">{errors.licenseFile}</p>}
+            <div className="flex justify-between mt-4">
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button
+                className="px-4 py-2 bg-teal-600 text-white rounded"
                 onClick={handleNext}
               >Next</button>
             </div>
           </div>
         )}
 
-        {step === 2 && (
-          <div className="mt-4 space-y-4">
-            <label className="block text-sm">Upload license / registration (PDF/JPG)</label>
-            <input type="file" onChange={handleFileChange} className="w-full" />
-            {touched.licenseFile && errors.licenseFile && <p className="text-red-500 text-sm">{errors.licenseFile}</p>}
-            <div className="flex justify-between mt-4">
-              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
-              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
-            </div>
-          </div>
-        )}
-
+        {/* Step 3: Preferences */}
         {step === 3 && (
-          <div className="mt-4 space-y-4">
+          <div className="space-y-4">
             <label className="block text-sm">Preferred locations</label>
             <div className="grid grid-cols-2 gap-2">
-              {["United States","United Kingdom","Canada","Australia"].map(loc => (
+              {["United States","United Kingdom","Canada","Australia"].map((loc) => (
                 <label key={loc} className="flex items-center gap-2">
                   <input type="checkbox" checked={values.locations.includes(loc)}
                     onChange={(e) => {
                       const newLocations = e.target.checked
                         ? [...values.locations, loc]
-                        : values.locations.filter(l=>l!==loc);
-                      handleChange('locations', newLocations);
+                        : values.locations.filter((l) => l !== loc);
+                      handleChange("locations", newLocations);
                     }}
                   />
                   {loc}
@@ -460,7 +519,11 @@ function NurseFlow({ onBack, setMessage }) {
             </div>
 
             <label className="block text-sm">Shift preferences</label>
-            <select value={values.shift} onChange={(e)=>handleChange('shift', e.target.value)} className="w-full p-2 border rounded">
+            <select
+              value={values.shift}
+              onChange={(e) => handleChange("shift", e.target.value)}
+              className="w-full p-2 border rounded"
+            >
               <option value="">Select shift</option>
               <option>Day</option>
               <option>Night</option>
@@ -474,8 +537,9 @@ function NurseFlow({ onBack, setMessage }) {
           </div>
         )}
 
+        {/* Step 4: Review */}
         {step === 4 && (
-          <div className="mt-4 space-y-4">
+          <div className="space-y-4">
             <h4 className="font-semibold">Review & Submit</h4>
             <div className="bg-gray-50 p-4 rounded text-sm space-y-2">
               <div><strong>Name:</strong> {values.fullName}</div>
@@ -485,14 +549,26 @@ function NurseFlow({ onBack, setMessage }) {
               <div><strong>Shift:</strong> {values.shift}</div>
               <div><strong>License File:</strong> {values.licenseFile ? values.licenseFile.name : "None"}</div>
             </div>
-
             <div className="flex justify-between mt-4">
               <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
-              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={() => {
-                setMessage('Application submitted — we will verify and match you.');
-                setStep(1);
-                setValues({ fullName:'', email:'', country:'', locations:[], shift:'', licenseFile:null });
-              }}>Submit</button>
+              <button
+                className="px-4 py-2 bg-teal-600 text-white rounded"
+                onClick={() => {
+                  setMessage("Application submitted — we will verify and match you.");
+                  setStep(1);
+                  setValues({
+                    fullName: "",
+                    email: "",
+                    password: "",
+                    country: "",
+                    locations: [],
+                    shift: "",
+                    licenseFile: null,
+                  });
+                  setErrors({});
+                  setTouched({});
+                }}
+              >Submit</button>
             </div>
           </div>
         )}
@@ -500,6 +576,9 @@ function NurseFlow({ onBack, setMessage }) {
     </div>
   );
 }
+
+export default NurseFlow;
+
 
 
 
