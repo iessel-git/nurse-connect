@@ -736,36 +736,48 @@ function EmployerFlow({ onBack, setMessage }) {
             </div>
           </div>
         )}
-
-        {/* Step 3: Review */}
-        {step===3 && (
-          <div className="space-y-4">
-            <h4 className="font-semibold">Review & Submit</h4>
-            <div className="bg-gray-50 p-4 rounded text-sm space-y-2">
-              <div><strong>Organization:</strong> {values.org}</div>
-              <div><strong>Contact:</strong> {values.contact}</div>
-              <div><strong>Country:</strong> {values.country}</div>
-              <div><strong>Password:</strong> {values.password ? "********" : "None"}</div>
-              <div><strong>Roles:</strong> {values.roles}</div>
-              <div><strong>Locations:</strong> {values.locations.join(", ")}</div>
-              <div><strong>Shift:</strong> {values.shift}</div>
-            </div>
-            <div className="flex justify-between mt-4">
-              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
-              <button className="px-4 py-2 bg-teal-600 text-white rounded"
-                onClick={()=>{
-                  setMessage("Employer request submitted successfully.");
-                  setStep(1);
-                  setValues({org:"",contact:"",password:"",country:"",roles:"",locations:[],shift:""});
-                  setErrors({});
-                  setTouched({});
-                }}
-              >Submit</button>
-            </div>
-          </div>
-        )}
-      </div>
+{/* Step 3: Review */}
+  {step === 3 && (
+  <div className="space-y-4">
+    <h4 className="font-semibold">Review & Submit</h4>
+    <div className="bg-gray-50 p-4 rounded text-sm space-y-2">
+      <div><strong>Organization:</strong> {values.org}</div>
+      <div><strong>Contact:</strong> {values.contact}</div>
+      <div><strong>Country:</strong> {values.country}</div>
+      <div><strong>Password:</strong> {values.password ? "********" : "None"}</div>
+      <div><strong>Roles:</strong> {values.roles}</div>
+      <div><strong>Locations:</strong> {values.locations.join(", ")}</div>
+      <div><strong>Shift:</strong> {values.shift}</div>
     </div>
+    <div className="flex justify-between mt-4">
+      <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+      <button
+        className="px-4 py-2 bg-teal-600 text-white rounded"
+        onClick={() => {
+          // 1️⃣ Reset all form state first
+          setValues({
+            org: "",
+            contact: "",
+            password: "",
+            country: "",
+            roles: "",
+            locations: [],
+            shift: ""
+          });
+          setErrors({});
+          setTouched({});
+          
+          // 2️⃣ Set step back to 1
+          setStep(1);
+          
+          // 3️⃣ Show success message
+          setMessage("Employer request submitted successfully.");
+        }}
+      >
+        Submit
+      </button>
+    </div>
+  </div>
   );
 }
 
