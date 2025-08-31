@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 export default function App() {
-  const [route, setRoute] = useState('home')
-  const [message, setMessage] = useState('')
+  const [route, setRoute] = useState('home');
+  const [message, setMessage] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
+      {/* --- Responsive Header/Nav --- */}
       <header className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -15,16 +17,35 @@ export default function App() {
               <p className="text-xs text-gray-500">Connecting nurses to hospitals & homes — locally & internationally</p>
             </div>
           </div>
-          <nav className="flex gap-3 items-center">
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex gap-3 items-center">
             <button onClick={() => setRoute('home')} className="text-sm hover:underline">Home</button>
             <button onClick={() => setRoute('nurse')} className="text-sm hover:underline">For Nurses</button>
             <button onClick={() => setRoute('employer')} className="text-sm hover:underline">For Employers</button>
             <button onClick={() => setRoute('playbooks')} className="text-sm hover:underline">Country Playbooks</button>
             <button onClick={() => setRoute('policies')} className="text-sm text-teal-600 font-medium">Compliance</button>
           </nav>
-        </div>
-      </header>
 
+          {/* Mobile Hamburger */}
+          <div className="md:hidden">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 border rounded">
+              {mobileMenuOpen ? '✕' : '☰'}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <nav className="md:hidden bg-white border-t px-6 py-4 flex flex-col gap-2">
+            <button onClick={() => { setRoute('home'); setMobileMenuOpen(false); }} className="text-sm hover:underline">Home</button>
+            <button onClick={() => { setRoute('nurse'); setMobileMenuOpen(false); }} className="text-sm hover:underline">For Nurses</button>
+            <button onClick={() => { setRoute('employer'); setMobileMenuOpen(false); }} className="text-sm hover:underline">For Employers</button>
+            <button onClick={() => { setRoute('playbooks'); setMobileMenuOpen(false); }} className="text-sm hover:underline">Country Playbooks</button>
+            <button onClick={() => { setRoute('policies'); setMobileMenuOpen(false); }} className="text-sm text-teal-600 font-medium">Compliance</button>
+          </nav>
+        )}
+      </header>
       <main className="max-w-6xl mx-auto px-6 py-10">
         {route === 'home' && <Home onSelect={(r) => setRoute(r)} />}
         {route === 'nurse' && <NurseFlow onBack={() => setRoute('home')} setMessage={setMessage} />}
