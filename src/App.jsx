@@ -581,152 +581,176 @@ function NurseFlow({ onBack, setMessage }) {
 
 
 
-function EmployerFlow() {
+function EmployerFlow({ onBack, setMessage }) {
+  const steps = ["Profile", "Positions", "Review"];
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
+
+  const [values, setValues] = useState({
+    org: "",
+    contact: "",
     password: "",
-    company: "",
-    position: "",
+    country: "",
+    roles: "",
+    locations: [],
+    shift: ""
   });
 
-  // Handle form field updates
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  const getPasswordStrength = (password) => {
+    if (!password) return "";
+    if (password.length < 6) return "Weak";
+    if (password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password)) return "Strong";
+    return "Medium";
   };
 
-  // Validation rules for each step
-  const isStepValid = () => {
-    if (step === 1) return form.name.trim() !== "";
-    if (step === 2) return /\S+@\S+\.\S+/.test(form.email);
-    if (step === 3) return form.password.length >= 6;
-    if (step === 4) return form.company.trim() !== "";
-    if (step === 5) return form.position.trim() !== "";
-    return true;
+  const validateField = (field, value) => {
+    let error = "";
+    switch (field) {
+      case "org": if (!value.trim()) error="Organization required"; break;
+      case "contact": 
+        if (!value.trim()) error="Contact required";
+        else if (!/^\S+@\S+\.\S+$/.test(value)) error="Invalid email"; 
+        break;
+      case "password":
+        if (!value) error="Password required";
+        else if (value.length < 6) error="Password too short"; 
+        break;
+      case "country": if (!value) error="Country required"; break;
+      case "roles": if (!value.trim()) error="Roles required"; break;
+      default: break;
+    }
+    return error;
   };
+
+  const handleChange = (field, value) => {
+    setValues({ ...values, [field]: value });
+    setTouched({ ...touched, [field]: true });
+    setErrors({ ...errors, [field]: validateField(field, value) });
+  };
+
+  const isValid = Object.values(errors).every(e=>!e) &&
+                  ["org","contact","password","country","roles"].every(f=>values[f]);
+
+  const handleNext = () => setStep(step+1);
+  const handleBack = () => setStep(step-1);
 
   return (
-    <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-center">Employer Sign Up</h2>
+    <div>
+      {onBack && <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>}
+      <div className="bg-white p-6 rounded shadow max-w-md mx-auto">
+        <h2 className="text-xl font-semibold">Employer Application</h2>
+        <p className="text-sm text-gray-600 mt-1">Post job openings and connect with qualified nurses.</p>
 
-      {/* Step 1 - Name */}
-      {step === 1 && (
-        <div>
-          <label className="block mb-2">Full Name</label>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Enter your full name"
-            className="w-full border rounded p-2"
-          />
+        {/* Progress */}
+        <div className="flex justify-between mt-4 mb-6">
+          {steps.map((s,i)=><div key={s} className={`flex-1 text-center ${step===i+1?"font-bold":"text-gray-400"}`}>{s}</div>)}
         </div>
-      )}
 
-      {/* Step 2 - Email */}
-      {step === 2 && (
-        <div>
-          <label className="block mb-2">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            className="w-full border rounded p-2"
-          />
-        </div>
-      )}
-
-      {/* Step 3 - Password */}
-      {step === 3 && (
-        <div>
-          <label className="block mb-2">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="Enter a password (min 6 characters)"
-            className="w-full border rounded p-2"
-          />
-        </div>
-      )}
-
-      {/* Step 4 - Company */}
-      {step === 4 && (
-        <div>
-          <label className="block mb-2">Company</label>
-          <input
-            type="text"
-            name="company"
-            value={form.company}
-            onChange={handleChange}
-            placeholder="Enter company name"
-            className="w-full border rounded p-2"
-          />
-        </div>
-      )}
-
-      {/* Step 5 - Position */}
-      {step === 5 && (
-        <div>
-          <label className="block mb-2">Position</label>
-          <input
-            type="text"
-            name="position"
-            value={form.position}
-            onChange={handleChange}
-            placeholder="Enter your position"
-            className="w-full border rounded p-2"
-          />
-        </div>
-      )}
-
-      {/* Step 6 - Review */}
-      {step === 6 && (
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Review Your Info</h3>
-          <ul className="mb-4">
-            <li><strong>Name:</strong> {form.name}</li>
-            <li><strong>Email:</strong> {form.email}</li>
-            <li><strong>Password:</strong> ******</li>
-            <li><strong>Company:</strong> {form.company}</li>
-            <li><strong>Position:</strong> {form.position}</li>
-          </ul>
-          <button
-            onClick={() => alert("Employer Registration Submitted!")}
-            className="w-full bg-green-600 text-white p-2 rounded"
-          >
-            Submit
-          </button>
-        </div>
-      )}
-
-      {/* Navigation */}
-      <div className="flex justify-between mt-4">
-        {step > 1 && step < 6 && (
-          <button
-            onClick={() => setStep(step - 1)}
-            className="bg-gray-300 px-4 py-2 rounded"
-          >
-            Back
-          </button>
+        {/* Step 1: Profile */}
+        {step===1 && (
+          <div className="space-y-4">
+            {["org","contact","password","country"].map(field=>(
+              <div key={field} className="relative">
+                {field!=="country" ? (
+                  <input
+                    type={field==="password"?"password":(field==="contact"?"email":"text")}
+                    value={values[field]}
+                    onChange={e=>handleChange(field,e.target.value)}
+                    placeholder={field==="org"?"Organization":field==="contact"?"Email":"Password"}
+                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 transition
+                      ${touched[field] && errors[field]?"border-red-500 focus:ring-red-500":"border-gray-300 focus:ring-teal-500"}`}
+                  />
+                ) : (
+                  <select value={values.country} onChange={e=>handleChange("country",e.target.value)}
+                    className={`w-full p-2 border rounded focus:outline-none focus:ring-2 transition
+                      ${touched.country && errors.country?"border-red-500 focus:ring-red-500":"border-gray-300 focus:ring-teal-500"}`}
+                  >
+                    <option value="">Select Country</option>
+                    <option>United States</option>
+                    <option>United Kingdom</option>
+                    <option>Canada</option>
+                    <option>Australia</option>
+                  </select>
+                )}
+                {touched[field] && <span className="absolute right-3 top-2 text-lg">{errors[field]?"❌":"✅"}</span>}
+                {field==="password" && values.password && (
+                  <p className="text-xs mt-1">Strength: <strong>{getPasswordStrength(values.password)}</strong></p>
+                )}
+              </div>
+            ))}
+            <div className="flex justify-end mt-4">
+              <button disabled={!isValid} onClick={handleNext}
+                className={`px-4 py-2 rounded font-medium ${isValid?"bg-teal-600 text-white":"bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+              >Next</button>
+            </div>
+          </div>
         )}
-        {step < 6 && (
-          <button
-            onClick={() => setStep(step + 1)}
-            disabled={!isStepValid()}
-            className={`px-4 py-2 rounded ${
-              isStepValid()
-                ? "bg-blue-600 text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            Next
-          </button>
+
+        {/* Step 2: Positions */}
+        {step===2 && (
+          <div className="space-y-4">
+            <label className="block text-sm">Role / Skills Needed</label>
+            <input type="text" value={values.roles} onChange={e=>handleChange("roles",e.target.value)}
+              className="w-full p-2 border rounded" placeholder="e.g., RN, LPN, ICU Nurse" />
+            
+            <label className="block text-sm">Preferred Locations</label>
+            <div className="grid grid-cols-2 gap-2">
+              {["United States","United Kingdom","Canada","Australia"].map(loc=>(
+                <label key={loc} className="flex items-center gap-2">
+                  <input type="checkbox" checked={values.locations.includes(loc)}
+                    onChange={e=>{
+                      const newLocs = e.target.checked ? [...values.locations,loc] : values.locations.filter(l=>l!==loc);
+                      handleChange("locations",newLocs);
+                    }}
+                  />
+                  {loc}
+                </label>
+              ))}
+            </div>
+
+            <label className="block text-sm">Shift Preference</label>
+            <select value={values.shift} onChange={e=>handleChange("shift",e.target.value)} className="w-full p-2 border rounded">
+              <option value="">Select shift</option>
+              <option>Day</option>
+              <option>Night</option>
+              <option>Any</option>
+            </select>
+
+            <div className="flex justify-between mt-4">
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Review */}
+        {step===3 && (
+          <div className="space-y-4">
+            <h4 className="font-semibold">Review & Submit</h4>
+            <div className="bg-gray-50 p-4 rounded text-sm space-y-2">
+              <div><strong>Organization:</strong> {values.org}</div>
+              <div><strong>Contact:</strong> {values.contact}</div>
+              <div><strong>Country:</strong> {values.country}</div>
+              <div><strong>Password:</strong> {values.password ? "********" : "None"}</div>
+              <div><strong>Roles:</strong> {values.roles}</div>
+              <div><strong>Locations:</strong> {values.locations.join(", ")}</div>
+              <div><strong>Shift:</strong> {values.shift}</div>
+            </div>
+            <div className="flex justify-between mt-4">
+              <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded"
+                onClick={()=>{
+                  setMessage("Employer request submitted successfully.");
+                  setStep(1);
+                  setValues({org:"",contact:"",password:"",country:"",roles:"",locations:[],shift:""});
+                  setErrors({});
+                  setTouched({});
+                }}
+              >Submit</button>
+            </div>
+          </div>
         )}
       </div>
     </div>
