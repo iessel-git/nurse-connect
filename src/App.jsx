@@ -581,136 +581,133 @@ function NurseFlow({ onBack, setMessage }) {
 
 function EmployerFlow() {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    company: "",
-    role: "",
-    description: ""
+    profile: ""
   });
 
-  // Handle input changes
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  // Validation per step
-  const isStepValid = () => {
+  const nextStep = () => {
+    setStep(step + 1);
+  };
+
+  const prevStep = () => {
+    setStep(step - 1);
+  };
+
+  const isNextDisabled = () => {
     if (step === 1) {
-      return form.name && form.email && form.password;
+      return !formData.name;
     }
     if (step === 2) {
-      return form.company && form.role;
+      return !formData.email;
     }
     if (step === 3) {
-      return form.description;
+      return !formData.password;
+    }
+    if (step === 4) {
+      return !formData.profile;
     }
     return false;
   };
 
-  const handleNext = () => {
-    if (isStepValid() && step < 3) setStep(step + 1);
-  };
-
-  const handleBack = () => {
-    if (step > 1) setStep(step - 1);
-  };
-
   return (
-    <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-6">
-      <h2 className="text-2xl font-bold text-center mb-4">Employer Signup</h2>
-
+    <div className="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6">
       {step === 1 && (
-        <>
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Employer Name</h2>
           <input
             type="text"
             name="name"
-            placeholder="Full Name"
-            value={form.name}
+            value={formData.name}
             onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
+            placeholder="Enter employer name"
+            className="w-full border p-2 rounded"
           />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
-          />
-        </>
+        </div>
       )}
 
       {step === 2 && (
-        <>
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Email</h2>
           <input
-            type="text"
-            name="company"
-            placeholder="Company Name"
-            value={form.company}
+            type="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
+            placeholder="Enter email"
+            className="w-full border p-2 rounded"
           />
-          <input
-            type="text"
-            name="role"
-            placeholder="Your Role"
-            value={form.role}
-            onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
-          />
-        </>
+        </div>
       )}
 
       {step === 3 && (
-        <>
-          <textarea
-            name="description"
-            placeholder="Company Profile / Description"
-            value={form.description}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Password</h2>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
             onChange={handleChange}
-            className="w-full mb-3 p-2 border rounded"
+            placeholder="Enter password"
+            className="w-full border p-2 rounded"
           />
-        </>
+        </div>
       )}
 
-      {/* Navigation buttons */}
-      <div className="flex justify-between mt-4">
+      {step === 4 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Employer Profile</h2>
+          <textarea
+            name="profile"
+            value={formData.profile}
+            onChange={handleChange}
+            placeholder="Describe employer profile"
+            className="w-full border p-2 rounded"
+          />
+        </div>
+      )}
+
+      {step === 5 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Review</h2>
+          <p><strong>Name:</strong> {formData.name}</p>
+          <p><strong>Email:</strong> {formData.email}</p>
+          <p><strong>Password:</strong> ******</p>
+          <p><strong>Profile:</strong> {formData.profile}</p>
+        </div>
+      )}
+
+      <div className="flex justify-between mt-6">
         {step > 1 && (
           <button
-            onClick={handleBack}
-            className="px-4 py-2 bg-gray-300 rounded"
+            onClick={prevStep}
+            className="bg-gray-300 px-4 py-2 rounded"
           >
             Back
           </button>
         )}
-        {step < 3 ? (
+        {step < 5 && (
           <button
-            onClick={handleNext}
-            disabled={!isStepValid()}
+            onClick={nextStep}
+            disabled={isNextDisabled()}
             className={`px-4 py-2 rounded text-white ${
-              isStepValid() ? "bg-blue-500" : "bg-gray-400 cursor-not-allowed"
+              isNextDisabled() ? "bg-gray-400" : "bg-blue-500"
             }`}
           >
             Next
           </button>
-        ) : (
-          <button
-            onClick={() => alert("Employer Registered!")}
-            disabled={!isStepValid()}
-            className={`px-4 py-2 rounded text-white ${
-              isStepValid() ? "bg-green-500" : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
+        )}
+        {step === 5 && (
+          <button className="bg-green-500 text-white px-4 py-2 rounded">
             Submit
           </button>
         )}
@@ -718,8 +715,6 @@ function EmployerFlow() {
     </div>
   );
 }
-
-
 
 function CountryPlaybooks({ onBack }) {
   return (
