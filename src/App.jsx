@@ -700,9 +700,7 @@ function EmployerFlow({ onBack, setMessage }) {
           </div>
         )}
 
-        {/* Step 2: Positions */}
-        {step===2 && (
-          <div className="space-y-4">
+       
 
 
 
