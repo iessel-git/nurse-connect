@@ -90,29 +90,160 @@ export default function App() {
 // ---------------- Supporting Components ----------------
 
 function Home({ onSelect }) {
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [country, setCountry] = useState('')
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [country, setCountry] = useState('');
 
   return (
-    <section>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div>
-          <h2 className="text-3xl font-bold">Healthcare staffing that crosses borders — responsibly</h2>
-          <p className="mt-4 text-gray-700">We match licensed, vetted nurses to hospitals and patients across the US, UK, Canada and Australia.</p>
-          <div className="mt-6 flex gap-4">
-            <button onClick={() => onSelect('nurse')} className="px-5 py-3 rounded-md bg-teal-600 text-white font-medium shadow">I’m a Nurse — Apply</button>
-            <button onClick={() => onSelect('employer')} className="px-5 py-3 rounded-md border border-gray-200">I’m an Employer — Hire</button>
+    <div className="w-full">
+      {/* -------- Hero Section -------- */}
+      <section className="relative w-full h-screen">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1588776814546-6d10a9a2e39e?auto=format&fit=crop&w=1950&q=80"
+            alt="Healthcare hero"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        <div className="relative z-10 flex flex-col justify-center items-start h-full max-w-6xl mx-auto px-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+            Connecting Nurses <br /> to Opportunities Worldwide
+          </h1>
+          <p className="mt-4 text-white text-lg md:text-xl max-w-xl">
+            Licensed, vetted nurses matched to hospitals and patients across the US, UK, Canada, and Australia — fast, transparent, and secure.
+          </p>
+          <div className="mt-6 flex flex-col md:flex-row gap-4">
+            <button
+              onClick={() => onSelect('nurse')}
+              className="px-6 py-3 bg-teal-600 text-white rounded-lg font-medium shadow hover:bg-teal-700 transition"
+            >
+              I’m a Nurse — Apply
+            </button>
+            <button
+              onClick={() => onSelect('employer')}
+              className="px-6 py-3 border border-white text-white rounded-lg font-medium hover:bg-white hover:text-teal-600 transition"
+            >
+              I’m an Employer — Hire
+            </button>
+          </div>
+
+          <div className="mt-10 w-full md:w-96 bg-white rounded-lg p-6 shadow-lg">
+            <h3 className="font-semibold text-gray-700 mb-4">Quick Nurse Signup</h3>
+            <NurseMiniForm
+              fullName={fullName}
+              setFullName={setFullName}
+              email={email}
+              setEmail={setEmail}
+              country={country}
+              setCountry={setCountry}
+            />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold mb-4">Quick Nurse Signup</h3>
-          <NurseMiniForm fullName={fullName} setFullName={setFullName} email={email} setEmail={setEmail} country={country} setCountry={setCountry} />
+      </section>
+
+      {/* -------- Features / Stats Section -------- */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold">Why Choose Nurse Connect?</h2>
+          <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+            We streamline international nurse recruitment with compliance, transparency, and speed.
+          </p>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+              <h3 className="font-semibold text-xl mb-2">Global Opportunities</h3>
+              <p className="text-gray-600 text-sm">
+                Match with hospitals across the US, UK, Canada, and Australia — wherever your career goals take you.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+              <h3 className="font-semibold text-xl mb-2">Verified Credentials</h3>
+              <p className="text-gray-600 text-sm">
+                All nurses are vetted and licensed. Upload your credentials and start applying in minutes.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+              <h3 className="font-semibold text-xl mb-2">Transparent Process</h3>
+              <p className="text-gray-600 text-sm">
+                No hidden fees, no surprises. Every contract is clear and compliant with ethical recruitment standards.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
-  )
+      </section>
+
+      {/* -------- Country Playbooks Preview -------- */}
+      <section className="py-20 max-w-6xl mx-auto px-6">
+        <h2 className="text-3xl font-bold text-center">Explore Country Pathways</h2>
+        <p className="mt-4 text-gray-600 text-center max-w-2xl mx-auto">
+          Step-by-step guides to licensing, registration, and employment for nurses in each country.
+        </p>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <PlaybookCard
+            country="United States"
+            bullets={["NCLEX & state licensure", "Nurse Licensure Compact (NLC)", "EB-3 Schedule A (immigration)"]}
+          />
+          <PlaybookCard
+            country="United Kingdom"
+            bullets={["NMC registration", "IELTS Academic / OET required", "Visa routes & employer sponsorship"]}
+          />
+          <PlaybookCard
+            country="Canada"
+            bullets={["NNAS assessment", "Provincial registration", "Language tests & bridging programs"]}
+          />
+          <PlaybookCard
+            country="Australia"
+            bullets={["AHPRA registration", "Qualification assessment", "Possible OBA route & bridging"]}
+          />
+        </div>
+      </section>
+
+      {/* -------- Testimonials Section -------- */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold">Hear from Our Nurses</h2>
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p className="text-gray-600 text-sm">"Nurse Connect helped me secure a position in Canada smoothly and ethically. Highly recommend!"</p>
+              <p className="mt-4 font-semibold">— Jane D., RN</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p className="text-gray-600 text-sm">"Transparent and efficient. I felt supported every step of the way." </p>
+              <p className="mt-4 font-semibold">— Samuel K., RN</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p className="text-gray-600 text-sm">"Quick verification of credentials made my international application effortless."</p>
+              <p className="mt-4 font-semibold">— Amina T., RN</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* -------- Call to Action Section -------- */}
+      <section className="py-20 bg-teal-600 text-white text-center">
+        <h2 className="text-3xl md:text-4xl font-bold">Ready to take your nursing career global?</h2>
+        <p className="mt-4 max-w-2xl mx-auto">Start your application or post a job for qualified nurses today.</p>
+        <div className="mt-6 flex flex-col md:flex-row justify-center gap-4">
+          <button
+            onClick={() => onSelect('nurse')}
+            className="px-6 py-3 bg-white text-teal-600 rounded-lg font-medium shadow hover:bg-gray-100 transition"
+          >
+            Apply as Nurse
+          </button>
+          <button
+            onClick={() => onSelect('employer')}
+            className="px-6 py-3 border border-white text-white rounded-lg font-medium hover:bg-white hover:text-teal-600 transition"
+          >
+            Hire Nurses
+          </button>
+        </div>
+      </section>
+    </div>
+  );
 }
+
 
 function NurseMiniForm({ fullName, setFullName, email, setEmail, country, setCountry }) {
   return (
