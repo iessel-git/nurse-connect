@@ -77,7 +77,7 @@ function Home({ onSelect }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div>
           <h2 className="text-3xl font-bold">Healthcare staffing that crosses borders — responsibly</h2>
-          <p className="mt-4 text-gray-700">We match licensed, vetted nurses to hospitals and patients across the US, UK, Canada and Australia. Dual-path funnels for nurses and employers make matching fast and compliant.</p>
+          <p className="mt-4 text-gray-700">We match licensed, vetted nurses to hospitals and patients across the US, UK, Canada and Australia.</p>
           <div className="mt-6 flex gap-4">
             <button onClick={() => onSelect('nurse')} className="px-5 py-3 rounded-md bg-teal-600 text-white font-medium shadow">I’m a Nurse — Apply</button>
             <button onClick={() => onSelect('employer')} className="px-5 py-3 rounded-md border border-gray-200">I’m an Employer — Hire</button>
@@ -95,9 +95,9 @@ function Home({ onSelect }) {
 function NurseMiniForm({ fullName, setFullName, email, setEmail, country, setCountry }) {
   return (
     <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); alert('Signup received — continue to full profile'); }}>
-      <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" className="w-full border rounded p-2" />
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full border rounded p-2" />
-      <select value={country} onChange={(e) => setCountry(e.target.value)} className="w-full border rounded p-2">
+      <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" />
+      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+      <select value={country} onChange={(e) => setCountry(e.target.value)}>
         <option value="">Select country</option>
         <option>United States</option>
         <option>United Kingdom</option>
@@ -109,7 +109,6 @@ function NurseMiniForm({ fullName, setFullName, email, setEmail, country, setCou
   )
 }
 
-// Full NurseFlow component
 function NurseFlow({ onBack, setMessage }) {
   const [step, setStep] = useState(1)
   const [profile, setProfile] = useState({ fullName: '', email: '', country: '', license: '' })
@@ -119,51 +118,94 @@ function NurseFlow({ onBack, setMessage }) {
       <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
       <div className="bg-white p-6 rounded shadow">
         <h2 className="text-xl font-semibold">Nurse Application</h2>
-        <p className="text-sm text-gray-600 mt-1">Create a profile, upload credentials, and get matched faster.</p>
-        {/* Steps */}
+        <Progress steps={["Profile", "Credentials", "Preferences", "Review"]} current={step} />
+        {/* Multi-step form goes here */}
+        <div className="mt-4 flex justify-between">
+          {step > 1 && <button className="px-3 py-2 border rounded" onClick={() => setStep(step-1)}>Back</button>}
+          {step < 4 && <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={() => setStep(step+1)}>Next</button>}
+          {step === 4 && <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={() => { setMessage('Application submitted'); setStep(1); }}>Submit</button>}
+        </div>
       </div>
     </div>
   )
 }
 
-// Full EmployerFlow component
 function EmployerFlow({ onBack, setMessage }) {
-  const [form, setForm] = useState({ org: '', contact: '', requiredBy: '' })
-
+  const [form, setForm] = useState({ org: '', contact: '', role: '' })
   return (
     <div>
       <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
       <div className="bg-white p-6 rounded shadow">
         <h2 className="text-xl font-semibold">Employer Intake</h2>
-        <p className="text-sm text-gray-600 mt-1">Tell us about your need. We’ll match qualified nurses and handle credentialing.</p>
-        {/* Form fields here */}
+        <form onSubmit={(e) => { e.preventDefault(); setMessage('Request received'); }} className="space-y-4 mt-4">
+          <input value={form.org} onChange={(e) => setForm({...form, org: e.target.value})} placeholder="Organization" className="w-full p-2 border rounded" />
+          <input value={form.contact} onChange={(e) => setForm({...form, contact: e.target.value})} placeholder="Contact email / phone" className="w-full p-2 border rounded" />
+          <input value={form.role} onChange={(e) => setForm({...form, role: e.target.value})} placeholder="Role & skills needed" className="w-full p-2 border rounded" />
+          <button type="submit" className="px-4 py-2 bg-teal-600 text-white rounded">Submit request</button>
+        </form>
       </div>
     </div>
   )
 }
 
-// CountryPlaybooks component
 function CountryPlaybooks({ onBack }) {
   return (
     <div>
       <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
-      {/* Cards for US, UK, Canada, Australia */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <PlaybookCard country="United States" bullets={["NCLEX & state licensure","Nurse Licensure Compact (NLC)","EB-3 Schedule A (immigration)"]} />
+        <PlaybookCard country="United Kingdom" bullets={["NMC registration","IELTS Academic / OET required","Visa routes & employer sponsorship"]} />
+        <PlaybookCard country="Canada" bullets={["NNAS assessment","Provincial registration","Language tests & bridging programs"]} />
+        <PlaybookCard country="Australia" bullets={["AHPRA registration","Qualification assessment","Possible OBA route & bridging"]} />
+      </div>
     </div>
   )
 }
 
-// Policies component
+function PlaybookCard({ country, bullets }) {
+  return (
+    <div className="bg-white p-5 rounded shadow">
+      <h4 className="font-semibold">{country}</h4>
+      <ul className="list-disc pl-5 mt-2 space-y-1">
+        {bullets.map(b => <li key={b}>{b}</li>)}
+      </ul>
+      <button className="mt-4 px-3 py-2 bg-teal-600 text-white rounded">Start pathway</button>
+    </div>
+  )
+}
+
 function Policies({ onBack }) {
   return (
     <div>
       <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
-      {/* Policy sections */}
+      <div className="bg-white p-6 rounded shadow space-y-4">
+        <h3 className="font-semibold">Compliance & Policies</h3>
+        <section>
+          <h4 className="font-medium">Privacy & Data</h4>
+          <p className="text-sm text-gray-600">Secure storage with encryption and access logging.</p>
+        </section>
+        <section>
+          <h4 className="font-medium">Ethical Recruitment</h4>
+          <p className="text-sm text-gray-600">Follow WHO Global Code — no recruitment fees, transparent contracts.</p>
+        </section>
+        <section>
+          <h4 className="font-medium">Employer Compliance</h4>
+          <p className="text-sm text-gray-600">EEO language, BAA, and trust signals for hiring.</p>
+        </section>
+      </div>
     </div>
   )
 }
 
-// Placeholder components to avoid errors (can expand later)
-function Progress({ steps, current }) { return <div /> }
-function PlaybookCard({ country, bullets }) { return <div /> }
-function Feature({ title, body }) { return <div /> }
-function Stat({ title, value }) { return <div /> }
+function Progress({ steps, current }) {
+  return (
+    <div className="flex items-center gap-3">
+      {steps.map((s, i) => (
+        <div key={s} className="flex items-center gap-2">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${i+1 <= current ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'}`}>{i+1}</div>
+          <div className={`text-sm ${i+1 <= current ? 'text-gray-800' : 'text-gray-400'}`}>{s}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
