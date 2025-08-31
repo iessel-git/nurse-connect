@@ -147,7 +147,7 @@ function Home({ onSelect }) {
   {/* SVG Curve at bottom */}
   <div className="absolute bottom-0 w-full overflow-hidden leading-[0]">
     <svg className="relative block w-full h-20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1200 120">
-      <path d="M0,0 C600,120 600,0 1200,120 L1200,0 L0,0 Z" fill="white" />
+      <path d="M0,0 C600,120 600,0 1200,120 L1200,0 L0,0 Z" fill="blue" />
     </svg>
   </div>
 </section>
