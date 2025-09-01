@@ -596,6 +596,7 @@ function EmployerFlow({ onBack, setMessage }) {
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+  const [passwordKey, setPasswordKey] = useState(0); // <-- Added for password reset
 
   const getPasswordStrength = (password) => {
     if (!password) return "";
@@ -668,6 +669,7 @@ function EmployerFlow({ onBack, setMessage }) {
               <div key={field} className="relative">
                 {field !== "country" ? (
                   <input
+                    key={field === "password" ? passwordKey : field} // <-- passwordKey applied here
                     type={field === "password" ? "password" : (field === "contact" ? "email" : "text")}
                     value={values[field]}
                     onChange={e => handleChange(field, e.target.value)}
@@ -696,7 +698,9 @@ function EmployerFlow({ onBack, setMessage }) {
               </div>
             ))}
             <div className="flex justify-end mt-4">
-              <button disabled={!isStepValid()} onClick={handleNext}
+              <button
+                disabled={!isStepValid()}
+                onClick={handleNext}
                 className={`px-4 py-2 rounded font-medium ${isStepValid() ? "bg-teal-600 text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
               >Next</button>
             </div>
@@ -707,13 +711,8 @@ function EmployerFlow({ onBack, setMessage }) {
         {step === 2 && (
           <div className="space-y-4">
             <label className="block text-sm">Role / Skills Needed</label>
-            <input
-              type="text"
-              value={values.roles}
-              onChange={e => handleChange("roles", e.target.value)}
-              className="w-full p-2 border rounded"
-              placeholder="e.g., RN, LPN, ICU Nurse"
-            />
+            <input type="text" value={values.roles} onChange={e => handleChange("roles", e.target.value)}
+              className="w-full p-2 border rounded" placeholder="e.g., RN, LPN, ICU Nurse" />
 
             <label className="block text-sm">Preferred Locations</label>
             <div className="grid grid-cols-2 gap-2">
@@ -723,9 +722,7 @@ function EmployerFlow({ onBack, setMessage }) {
                     type="checkbox"
                     checked={values.locations.includes(loc)}
                     onChange={e => {
-                      const newLocs = e.target.checked
-                        ? [...values.locations, loc]
-                        : values.locations.filter(l => l !== loc);
+                      const newLocs = e.target.checked ? [...values.locations, loc] : values.locations.filter(l => l !== loc);
                       handleChange("locations", newLocs);
                     }}
                   />
@@ -735,11 +732,7 @@ function EmployerFlow({ onBack, setMessage }) {
             </div>
 
             <label className="block text-sm">Shift Preference</label>
-            <select
-              value={values.shift}
-              onChange={e => handleChange("shift", e.target.value)}
-              className="w-full p-2 border rounded"
-            >
+            <select value={values.shift} onChange={e => handleChange("shift", e.target.value)} className="w-full p-2 border rounded">
               <option value="">Select shift</option>
               <option>Day</option>
               <option>Night</option>
@@ -787,18 +780,15 @@ function EmployerFlow({ onBack, setMessage }) {
                   });
                   setErrors({});
                   setTouched({});
-
-                  // Reset step to 1
                   setStep(1);
-
-                  // Show success message
                   setMessage("Employer request submitted successfully.");
+                  // Force password input remount
+                  setPasswordKey(Math.random());
                 }}
               >Submit</button>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
