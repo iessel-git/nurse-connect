@@ -584,6 +584,9 @@ function EmployerFlow({ onBack, setMessage }) {
   const steps = ["Profile", "Positions", "Review"];
   const [step, setStep] = useState(1);
 
+  // Add a `formResetKey` to force remount
+  const [formResetKey, setFormResetKey] = useState(0);
+
   const [values, setValues] = useState({
     org: "",
     contact: "",
@@ -596,7 +599,6 @@ function EmployerFlow({ onBack, setMessage }) {
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [passwordKey, setPasswordKey] = useState(0); // <-- Added for password reset
 
   const getPasswordStrength = (password) => {
     if (!password) return "";
@@ -649,7 +651,7 @@ function EmployerFlow({ onBack, setMessage }) {
   const handleBack = () => setStep(step - 1);
 
   return (
-    <div>
+    <div key={formResetKey}> {/* <-- force full remount on reset */}
       {onBack && <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>}
       <div className="bg-white p-6 rounded shadow max-w-md mx-auto">
         <h2 className="text-xl font-semibold">Employer Application</h2>
@@ -669,7 +671,6 @@ function EmployerFlow({ onBack, setMessage }) {
               <div key={field} className="relative">
                 {field !== "country" ? (
                   <input
-                    key={field === "password" ? passwordKey : field} // <-- passwordKey applied here
                     type={field === "password" ? "password" : (field === "contact" ? "email" : "text")}
                     value={values[field]}
                     onChange={e => handleChange(field, e.target.value)}
@@ -768,7 +769,6 @@ function EmployerFlow({ onBack, setMessage }) {
               <button
                 className="px-4 py-2 bg-teal-600 text-white rounded"
                 onClick={() => {
-                  // Reset all form fields
                   setValues({
                     org: "",
                     contact: "",
@@ -782,8 +782,7 @@ function EmployerFlow({ onBack, setMessage }) {
                   setTouched({});
                   setStep(1);
                   setMessage("Employer request submitted successfully.");
-                  // Force password input remount
-                  setPasswordKey(Math.random());
+                  setFormResetKey(prev => prev + 1); // <-- force full remount
                 }}
               >Submit</button>
             </div>
@@ -793,6 +792,7 @@ function EmployerFlow({ onBack, setMessage }) {
     </div>
   );
 }
+
 
 function CountryPlaybooks({ onBack }) {
   return (
