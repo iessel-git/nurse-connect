@@ -373,6 +373,7 @@ function NurseFlow({ onBack, setMessage }) {
     locations: [],
     shift: "",
     licenseFile: null,
+    roles: "", // ✅ Added roles field
   });
 
   const [errors, setErrors] = useState({});
@@ -445,6 +446,7 @@ function NurseFlow({ onBack, setMessage }) {
         locations: [],
         shift: "",
         licenseFile: null,
+        roles: "", // ✅ reset roles
       });
       setErrors({});
       setTouched({});
@@ -528,6 +530,15 @@ function NurseFlow({ onBack, setMessage }) {
         {/* Step 3: Preferences */}
         {step === 3 && (
           <div className="space-y-4">
+            <label className="block text-sm">Roles / Skills</label>
+            <input 
+              type="text" 
+              value={values.roles} 
+              onChange={e => handleChange("roles", e.target.value)}
+              placeholder="e.g., RN, LPN, ICU"
+              className="w-full p-2 border rounded"
+            />
+
             <label className="block text-sm">Preferred locations</label>
             <div className="grid grid-cols-2 gap-2">
               {["United States","United Kingdom","Canada","Australia"].map((loc) => (
@@ -572,6 +583,7 @@ function NurseFlow({ onBack, setMessage }) {
               <div><strong>Name:</strong> {values.fullName}</div>
               <div><strong>Email:</strong> {values.email}</div>
               <div><strong>Country:</strong> {values.country}</div>
+              <div><strong>Roles:</strong> {values.roles}</div> {/* ✅ Display roles */}
               <div><strong>Locations:</strong> {values.locations.join(", ")}</div>
               <div><strong>Shift:</strong> {values.shift}</div>
               <div><strong>License File:</strong> {values.licenseFile ? values.licenseFile.name : "None"}</div>
