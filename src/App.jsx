@@ -333,11 +333,15 @@ function NurseMiniForm({ onSubmit }) {
                 ${touched[field] && errors[field] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-teal-500'}`}
             >
               <option value="">Select country</option>
-              <option>United States</option>
-              <option>United Kingdom</option>
-              <option>Canada</option>
               <option>Australia</option>
-              <option>Ghana</option>
+             <option>Cameroon</option>
+             <option>Canada</option>
+             <option>Ghana</option>
+            <option>Nigeria</option>
+           <option>South Africa</option>
+           <option>Sierra Leone</option>
+           <option>United Kingdom</option>
+          <option>United States</option>
             </select>
           )}
 
@@ -493,11 +497,15 @@ function NurseFlow({ onBack, setMessage }) {
                       ${touched.country && errors.country ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"}`}
                   >
                     <option value="">Select Country</option>
-                    <option>United States</option>
-                    <option>United Kingdom</option>
-                    <option>Canada</option>
                     <option>Australia</option>
-                    <option>Ghana</option>
+                   <option>Cameroon</option>
+                  <option>Canada</option>
+                 <option>Ghana</option>
+                 <option>Nigeria</option>
+                <option>South Africa</option>
+               <option>Sierra Leone</option>
+                <option>United Kingdom</option>
+               <option>United States</option>
                   </select>
                 )}
                 {touched[field] && <span className="absolute right-3 top-2 text-lg">{errors[field] ? "❌" : "✅"}</span>}
