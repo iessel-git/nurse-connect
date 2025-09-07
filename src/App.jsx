@@ -579,12 +579,13 @@ function NurseFlow({ onBack, setMessage }) {
 
 
 
+import { db } from "./firebase.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 function EmployerFlow({ onBack, setMessage }) {
   const steps = ["Profile", "Positions", "Review"];
   const [step, setStep] = useState(1);
 
-  // Add a `formResetKey` to force remount
   const [formResetKey, setFormResetKey] = useState(0);
 
   const [values, setValues] = useState({
@@ -650,8 +651,35 @@ function EmployerFlow({ onBack, setMessage }) {
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);
 
+  const handleSubmit = async () => {
+    try {
+      await addDoc(collection(db, "employers"), {
+        ...values,
+        createdAt: new Date().toISOString()
+      });
+
+      setValues({
+        org: "",
+        contact: "",
+        password: "",
+        country: "",
+        roles: "",
+        locations: [],
+        shift: ""
+      });
+      setErrors({});
+      setTouched({});
+      setStep(1);
+      setMessage("Employer request submitted successfully.");
+      setFormResetKey(prev => prev + 1); // force remount to clear password
+    } catch (error) {
+      console.error("Error saving employer:", error);
+      setMessage("Error submitting employer request.");
+    }
+  };
+
   return (
-    <div key={formResetKey}> {/* <-- force full remount on reset */}
+    <div key={formResetKey}>
       {onBack && <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>}
       <div className="bg-white p-6 rounded shadow max-w-md mx-auto">
         <h2 className="text-xl font-semibold">Employer Application</h2>
@@ -768,22 +796,7 @@ function EmployerFlow({ onBack, setMessage }) {
               <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
               <button
                 className="px-4 py-2 bg-teal-600 text-white rounded"
-                onClick={() => {
-                  setValues({
-                    org: "",
-                    contact: "",
-                    password: "",
-                    country: "",
-                    roles: "",
-                    locations: [],
-                    shift: ""
-                  });
-                  setErrors({});
-                  setTouched({});
-                  setStep(1);
-                  setMessage("Employer request submitted successfully.");
-                  setFormResetKey(prev => prev + 1); // <-- force full remount
-                }}
+                onClick={handleSubmit}
               >Submit</button>
             </div>
           </div>
@@ -792,6 +805,7 @@ function EmployerFlow({ onBack, setMessage }) {
     </div>
   );
 }
+
 
 
 function CountryPlaybooks({ onBack }) {
