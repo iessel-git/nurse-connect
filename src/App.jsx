@@ -337,6 +337,7 @@ function NurseMiniForm({ onSubmit }) {
               <option>United Kingdom</option>
               <option>Canada</option>
               <option>Australia</option>
+              <option>Ghana</option>
             </select>
           )}
 
