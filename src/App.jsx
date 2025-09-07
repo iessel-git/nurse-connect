@@ -359,6 +359,8 @@ function NurseMiniForm({ onSubmit }) {
 }
 
 
+
+
 function NurseFlow({ onBack, setMessage }) {
   const steps = ["Profile", "Credentials", "Preferences", "Review"];
   const [step, setStep] = useState(1);
@@ -376,7 +378,6 @@ function NurseFlow({ onBack, setMessage }) {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  // Password strength check
   const getPasswordStrength = (password) => {
     if (!password) return "";
     if (password.length < 6) return "Weak";
@@ -416,13 +417,42 @@ function NurseFlow({ onBack, setMessage }) {
     setErrors({ ...errors, [field]: validateField(field, value) });
   };
 
+  const handleFileChange = (e) => handleChange("licenseFile", e.target.files[0]);
+
   const isValid =
     Object.values(errors).every((e) => !e) &&
     ["fullName", "email", "password", "country"].every((f) => values[f]);
 
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);
-  const handleFileChange = (e) => handleChange("licenseFile", e.target.files[0]);
+
+  // ✅ Save Nurse form to Firestore
+  const handleSubmit = async () => {
+    try {
+      await addDoc(collection(db, "nurses"), {
+        ...values,
+        licenseFile: values.licenseFile ? values.licenseFile.name : null, // only save filename
+        createdAt: new Date().toISOString()
+      });
+
+      setMessage("Application submitted — we will verify and match you.");
+      setStep(1);
+      setValues({
+        fullName: "",
+        email: "",
+        password: "",
+        country: "",
+        locations: [],
+        shift: "",
+        licenseFile: null,
+      });
+      setErrors({});
+      setTouched({});
+    } catch (error) {
+      console.error("Error saving nurse:", error);
+      setMessage("Error submitting application.");
+    }
+  };
 
   return (
     <div>
@@ -490,10 +520,7 @@ function NurseFlow({ onBack, setMessage }) {
             {touched.licenseFile && errors.licenseFile && <p className="text-red-500 text-sm">{errors.licenseFile}</p>}
             <div className="flex justify-between mt-4">
               <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
-              <button
-                className="px-4 py-2 bg-teal-600 text-white rounded"
-                onClick={handleNext}
-              >Next</button>
+              <button className="px-4 py-2 bg-teal-600 text-white rounded" onClick={handleNext}>Next</button>
             </div>
           </div>
         )}
@@ -553,21 +580,7 @@ function NurseFlow({ onBack, setMessage }) {
               <button className="px-3 py-2 border rounded" onClick={handleBack}>Back</button>
               <button
                 className="px-4 py-2 bg-teal-600 text-white rounded"
-                onClick={() => {
-                  setMessage("Application submitted — we will verify and match you.");
-                  setStep(1);
-                  setValues({
-                    fullName: "",
-                    email: "",
-                    password: "",
-                    country: "",
-                    locations: [],
-                    shift: "",
-                    licenseFile: null,
-                  });
-                  setErrors({});
-                  setTouched({});
-                }}
+                onClick={handleSubmit}
               >Submit</button>
             </div>
           </div>
