@@ -497,6 +497,7 @@ function NurseFlow({ onBack, setMessage }) {
                     <option>United Kingdom</option>
                     <option>Canada</option>
                     <option>Australia</option>
+                    <option>Ghana</option>
                   </select>
                 )}
                 {touched[field] && <span className="absolute right-3 top-2 text-lg">{errors[field] ? "❌" : "✅"}</span>}
