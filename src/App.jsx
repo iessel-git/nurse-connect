@@ -578,7 +578,6 @@ function NurseFlow({ onBack, setMessage }) {
 }
 
 
-
 import { db } from "./firebase.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
@@ -651,6 +650,7 @@ function EmployerFlow({ onBack, setMessage }) {
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);
 
+  // 🔥 Save automatically to Firestore when submitted
   const handleSubmit = async () => {
     try {
       await addDoc(collection(db, "employers"), {
@@ -671,7 +671,7 @@ function EmployerFlow({ onBack, setMessage }) {
       setTouched({});
       setStep(1);
       setMessage("Employer request submitted successfully.");
-      setFormResetKey(prev => prev + 1); // force remount to clear password
+      setFormResetKey(prev => prev + 1); // reset form
     } catch (error) {
       console.error("Error saving employer:", error);
       setMessage("Error submitting employer request.");
@@ -805,6 +805,10 @@ function EmployerFlow({ onBack, setMessage }) {
     </div>
   );
 }
+
+
+
+
 
 
 
