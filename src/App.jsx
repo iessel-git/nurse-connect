@@ -843,6 +843,128 @@ function EmployerFlow({ onBack, setMessage }) {
 
 
 
+// USPlaybook — drop into App.jsx (or create USPlaybook.jsx and import)
+function USPlaybook({ onBack }) {
+  const tabs = [
+    { id: 'nclex', label: 'NCLEX & State Licensure' },
+    { id: 'nlc', label: 'Nurse Licensure Compact (NLC)' },
+    { id: 'eb3', label: 'EB-3 / Schedule A (Immigration)' },
+  ];
+  const [active, setActive] = useState('nclex');
+
+  return (
+    <div>
+      {onBack && <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>}
+      <div className="bg-white p-6 rounded shadow max-w-4xl mx-auto">
+        <h2 className="text-2xl font-semibold mb-2">United States — Country Playbook</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Step-by-step guidance for nurses seeking licensure, multistate practice, or immigration pathways to the U.S.
+        </p>
+
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6">
+          {tabs.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setActive(t.id)}
+              className={`px-4 py-2 rounded ${active === t.id ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="space-y-6">
+          {active === 'nclex' && (
+            <section>
+              <h3 className="text-xl font-semibold mb-2">NCLEX & State Licensure</h3>
+              <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                <li>
+                  <strong>Pass the NCLEX</strong> — NCLEX-RN for Registered Nurses (or NCLEX-PN for practical nurses).
+                  Register & schedule through Pearson Vue after eligibility is confirmed by your applying State Board of Nursing.
+                </li>
+                <li>
+                  <strong>Apply to the State Board of Nursing</strong> in the state where you want to practice. Requirements commonly include:
+                  <ul className="list-disc list-inside ml-4 mt-1">
+                    <li>Credential evaluation (if trained outside the U.S.) such as CGFNS</li>
+                    <li>Background check / fingerprinting</li>
+                    <li>Proof of English proficiency (IELTS Academic, OET, or equivalent) when required</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Timing & tips:</strong> Each state has its own processing time — check the Board's website for exact guidance and application forms.
+                </li>
+              </ol>
+
+              <div className="mt-4 space-y-2">
+                <a className="text-sm text-teal-600 hover:underline block" href="https://www.ncsbn.org/nclex.htm" target="_blank" rel="noreferrer">NCSBN — NCLEX overview</a>
+                <a className="text-sm text-teal-600 hover:underline block" href="https://www.ncsbn.org/contact-bon.htm" target="_blank" rel="noreferrer">Directory of State Boards of Nursing</a>
+              </div>
+            </section>
+          )}
+
+          {active === 'nlc' && (
+            <section>
+              <h3 className="text-xl font-semibold mb-2">Nurse Licensure Compact (NLC)</h3>
+              <p className="text-sm text-gray-700">
+                The NLC allows nurses to hold a single multistate license that enables practice in participating states without obtaining additional licenses.
+              </p>
+
+              <ul className="list-disc list-inside mt-3 text-sm text-gray-700 space-y-2">
+                <li><strong>Who benefits:</strong> Travel nurses, cross-border clinicians, and nurses who frequently change practice locations inside the U.S.</li>
+                <li><strong>Eligibility:</strong> Must have a primary residence in a Compact state and meet other NLC eligibility criteria (background checks, etc.).</li>
+                <li><strong>Not universal:</strong> Not all U.S. states participate; confirm the current compact map before relying on it.</li>
+              </ul>
+
+              <div className="mt-4">
+                <a className="text-sm text-teal-600 hover:underline" href="https://www.ncsbn.org/nurse-licensure-compact.htm" target="_blank" rel="noreferrer">NLC — official info & map (NCSBN)</a>
+              </div>
+            </section>
+          )}
+
+          {active === 'eb3' && (
+            <section>
+              <h3 className="text-xl font-semibold mb-2">EB-3 / Schedule A (Immigration)</h3>
+              <p className="text-sm text-gray-700">
+                Registered nurses are often listed under Schedule A (Group I) by the U.S. Department of Labor — this simplifies the employer-sponsored green card (EB-3) process because labor certification may be waived.
+              </p>
+
+              <ol className="list-decimal list-inside mt-3 text-sm text-gray-700 space-y-2">
+                <li>
+                  <strong>Employer sponsorship required:</strong> A U.S. employer must offer a qualifying position and file the required petition(s).
+                </li>
+                <li>
+                  <strong>Typical documentation:</strong> Passing NCLEX (or eligibility), Credential evaluation (eg. CGFNS VisaScreen), valid passport, and employer forms.
+                </li>
+                <li>
+                  <strong>Process overview:</strong> Employer files I-140 (EB-3). If VisaScreen/NCLEX are necessary for state licensure or credential validation, obtain these early.
+                </li>
+              </ol>
+
+              <div className="mt-4 space-y-2">
+                <a className="text-sm text-teal-600 hover:underline block" href="https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-third-preference-eb-3" target="_blank" rel="noreferrer">USCIS — EB-3 overview</a>
+                <a className="text-sm text-teal-600 hover:underline block" href="https://www.cgfns.org/services/visascreen/" target="_blank" rel="noreferrer">CGFNS — VisaScreen information</a>
+              </div>
+            </section>
+          )}
+        </div>
+
+        {/* Quick checklist */}
+        <div className="mt-6 p-4 bg-gray-50 rounded text-sm">
+          <h4 className="font-semibold mb-2">Quick checklist</h4>
+          <ul className="list-disc list-inside text-sm text-gray-700">
+            <li>Confirm the target state Board of Nursing requirements.</li>
+            <li>Start credential evaluation early (CGFNS or state-specific).</li>
+            <li>Schedule NCLEX only after Board confirms eligibility.</li>
+            <li>Get English proficiency proof ready if required (IELTS/OET).</li>
+            <li>For EB-3, coordinate timeline with sponsoring employer and immigration counsel.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 
 
