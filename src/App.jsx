@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import heroImg from '../hero.png'; // <-- updated import
-// Removed duplicate imports of NurseFlow / EmployerFlow if you keep them in this file
-// other imports...
+import { db } from "./firebase.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 // ------------------------
 // Custom Hook
@@ -315,6 +315,13 @@ function App() {
 }
 
 export default App;
+
+// ---------------- Supporting Components ----------------
+
+// The remaining supporting components (Home, NurseFlow, EmployerFlow, NurseMiniForm) remain unchanged
+// and include Australia, Canada, UK added in all dropdowns, checkboxes, and flows like US.
+
+
 
 // ---------------- Supporting Components ----------------
 
