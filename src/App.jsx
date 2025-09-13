@@ -843,6 +843,33 @@ function EmployerFlow({ onBack, setMessage }) {
 
 
 
+
+function CountryPlaybooks({ onBack }) {
+  return (
+    <div>
+      <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <PlaybookCard country="United States" bullets={["NCLEX & state licensure","Nurse Licensure Compact (NLC)","EB-3 Schedule A (immigration)"]} />
+        <PlaybookCard country="United Kingdom" bullets={["NMC registration","IELTS Academic / OET required","Visa routes & employer sponsorship"]} />
+        <PlaybookCard country="Canada" bullets={["NNAS assessment","Provincial registration","Language tests & bridging programs"]} />
+        <PlaybookCard country="Australia" bullets={["AHPRA registration","Qualification assessment","Possible OBA route & bridging"]} />
+      </div>
+    </div>
+  )
+}
+
+function PlaybookCard({ country, bullets }) {
+  return (
+    <div className="bg-white p-5 rounded shadow">
+      <h4 className="font-semibold">{country}</h4>
+      <ul className="list-disc pl-5 mt-2 space-y-1">
+        {bullets.map(b => <li key={b}>{b}</li>)}
+      </ul>
+      <button className="mt-4 px-3 py-2 bg-teal-600 text-white rounded">Start pathway</button>
+    </div>
+  )
+}
+
 // USPlaybook — drop into App.jsx (or create USPlaybook.jsx and import)
 function USPlaybook({ onBack }) {
   const tabs = [
@@ -967,33 +994,6 @@ function USPlaybook({ onBack }) {
 }
 
 
-
-
-function CountryPlaybooks({ onBack }) {
-  return (
-    <div>
-      <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <PlaybookCard country="United States" bullets={["NCLEX & state licensure","Nurse Licensure Compact (NLC)","EB-3 Schedule A (immigration)"]} />
-        <PlaybookCard country="United Kingdom" bullets={["NMC registration","IELTS Academic / OET required","Visa routes & employer sponsorship"]} />
-        <PlaybookCard country="Canada" bullets={["NNAS assessment","Provincial registration","Language tests & bridging programs"]} />
-        <PlaybookCard country="Australia" bullets={["AHPRA registration","Qualification assessment","Possible OBA route & bridging"]} />
-      </div>
-    </div>
-  )
-}
-
-function PlaybookCard({ country, bullets }) {
-  return (
-    <div className="bg-white p-5 rounded shadow">
-      <h4 className="font-semibold">{country}</h4>
-      <ul className="list-disc pl-5 mt-2 space-y-1">
-        {bullets.map(b => <li key={b}>{b}</li>)}
-      </ul>
-      <button className="mt-4 px-3 py-2 bg-teal-600 text-white rounded">Start pathway</button>
-    </div>
-  )
-}
 
 function Policies({ onBack }) {
   return (
