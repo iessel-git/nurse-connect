@@ -1026,18 +1026,45 @@ function EmployerFlow({ onBack, setMessage }) {
 
 
 function CountryPlaybooks({ onBack }) {
+  const [selectedCountry, setSelectedCountry] = useState(null);
+
+  if (selectedCountry === 'us') {
+    return <USPlaybook onBack={() => setSelectedCountry(null)} />;
+  }
+
   return (
-    <div>
-      <button onClick={onBack} className="text-sm text-gray-500 mb-4">← Back</button>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <PlaybookCard country="United States" bullets={["NCLEX & state licensure","Nurse Licensure Compact (NLC)","EB-3 Schedule A (immigration)"]} />
-        <PlaybookCard country="United Kingdom" bullets={["NMC registration","IELTS Academic / OET required","Visa routes & employer sponsorship"]} />
-        <PlaybookCard country="Canada" bullets={["NNAS assessment","Provincial registration","Language tests & bridging programs"]} />
-        <PlaybookCard country="Australia" bullets={["AHPRA registration","Qualification assessment","Possible OBA route & bridging"]} />
+    <div className="p-6">
+      <button onClick={onBack} className="text-sm text-gray-500 mb-4">
+        ← Back
+      </button>
+      <h2 className="text-2xl font-semibold mb-4">Country Playbooks</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white p-6 rounded shadow">
+          <h3 className="text-xl font-semibold mb-2">United States</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Learn about NCLEX, Nurse Licensure Compact, and EB-3 immigration
+            for U.S. nursing.
+          </p>
+          <button
+            onClick={() => setSelectedCountry('us')}
+            className="px-4 py-2 bg-teal-600 text-white rounded"
+          >
+            Start Pathway
+          </button>
+        </div>
+
+        {/* Future countries can go here */}
+        <div className="bg-white p-6 rounded shadow opacity-50">
+          <h3 className="text-xl font-semibold mb-2">Coming Soon</h3>
+          <p className="text-sm text-gray-600">
+            More country playbooks will be added.
+          </p>
+        </div>
       </div>
     </div>
-  )
+  );
 }
+
 
 function PlaybookCard({ country, bullets }) {
   return (
