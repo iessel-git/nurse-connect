@@ -1025,133 +1025,45 @@ function EmployerFlow({ onBack, setMessage }) {
 
 
 
-//import React, { useState, useRef, useEffect } from "react";
-//import "./App.css"; // Tailwind or your custom CSS
+function CountryPlaybooks({ onBack }) {
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
-// =================== Country Playbooks Data ===================
-const countryPlaybooks = {
-  "United States": [
-    { step: "NCLEX & State Licensure", details: "Pass the NCLEX-RN exam and apply for state licensure in the state you wish to work." },
-    { step: "Nurse Licensure Compact (NLC)", details: "If licensed in an NLC state, you may work across participating states without needing multiple licenses." },
-    { step: "EB-3 Schedule A (Immigration)", details: "The EB-3 Schedule A visa allows foreign nurses to immigrate without labor certification." }
-  ],
-  Canada: [
-    { step: "NCLEX-RN Exam", details: "All nurses must pass the NCLEX-RN to practice in Canada." },
-    { step: "Nursing Regulatory Body", details: "Apply through the National Nursing Assessment Service (NNAS) for evaluation." },
-    { step: "Immigration Pathways", details: "Consider Express Entry (Federal Skilled Worker Program) or Provincial Nominee Programs." }
-  ],
-  "United Kingdom": [
-    { step: "NMC Registration", details: "Apply to the Nursing & Midwifery Council (NMC) for registration to practice in the UK." },
-    { step: "English Language Test", details: "Pass IELTS or OET with required scores to demonstrate English proficiency." },
-    { step: "Tier 2 Visa Sponsorship", details: "Secure a job offer from an NHS trust or employer who can sponsor your work visa." }
-  ],
-  Australia: [
-    { step: "AHPRA Registration", details: "Apply to the Australian Health Practitioner Regulation Agency (AHPRA) for registration." },
-    { step: "English Proficiency", details: "Pass IELTS, OET, or PTE with the required scores for nurses." },
-    { step: "Skilled Migration or Employer Sponsorship", details: "Apply through General Skilled Migration (subclass 189/190) or employer-sponsored visas." }
-  ]
-};
-
-// =================== CountryPlaybook Component ===================
-function CountryPlaybook() {
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [steps, setSteps] = useState([]);
-  const stepsRef = useRef(null);
-
-  const handleStartPathway = (country) => {
-    if (country && countryPlaybooks[country]) {
-      setSelectedCountry(country); // sync dropdown
-      setSteps(countryPlaybooks[country]);
-    }
-  };
-
-  // Smooth scroll to steps section when steps update
-  useEffect(() => {
-    if (steps.length > 0 && stepsRef.current) {
-      stepsRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [steps]);
+  if (selectedCountry === 'us') {
+    return <USPlaybook onBack={() => setSelectedCountry(null)} />;
+  }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6 text-center">Nursing Pathway Playbook</h2>
-
-      {/* ===== Card Buttons ===== */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {Object.keys(countryPlaybooks).map((country) => (
-          <div
-            key={country}
-            className={`p-6 rounded shadow hover:shadow-lg transition cursor-pointer ${
-              selectedCountry === country ? "border-2 border-teal-600" : "bg-white"
-            }`}
-            onClick={() => handleStartPathway(country)}
+    <div className="p-6">
+      <button onClick={onBack} className="text-sm text-gray-500 mb-4">
+        ← Back
+      </button>
+      <h2 className="text-2xl font-semibold mb-4">Country Playbooks</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white p-6 rounded shadow">
+          <h3 className="text-xl font-semibold mb-2">United States</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Learn about NCLEX, Nurse Licensure Compact, and EB-3 immigration
+            for U.S. nursing.
+          </p>
+          <button
+            onClick={() => setSelectedCountry('us')}
+            className="px-4 py-2 bg-teal-600 text-white rounded"
           >
-            <h3 className="text-xl font-semibold mb-2">{country}</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              {country === "United States" && "NCLEX, state licensure, NLC, EB-3 visa"}
-              {country === "Canada" && "NCLEX-RN, NNAS, provincial registration, Express Entry"}
-              {country === "United Kingdom" && "NMC, CBT/OSCE, English test, Health Worker visa"}
-              {country === "Australia" && "AHPRA, English test, bridging programs, migration visas"}
-            </p>
-            <button
-              onClick={() => handleStartPathway(country)}
-              className="px-4 py-2 bg-teal-600 text-white rounded"
-            >
-              Start Pathway
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* ===== Dropdown ===== */}
-      <div className="flex mb-6">
-        <select
-          className="border p-2 flex-1 mr-2"
-          value={selectedCountry}
-          onChange={(e) => setSelectedCountry(e.target.value)}
-        >
-          <option value="">Select Country</option>
-          {Object.keys(countryPlaybooks).map((country) => (
-            <option key={country}>{country}</option>
-          ))}
-        </select>
-
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-          onClick={() => handleStartPathway(selectedCountry)}
-        >
-          Start Pathway
-        </button>
-      </div>
-
-      {/* ===== Display Steps ===== */}
-      {steps.length > 0 && (
-        <div ref={stepsRef} className="mt-6 border-t pt-4">
-          <h3 className="text-2xl font-semibold mb-4">
-            Pathway for {selectedCountry}
-          </h3>
-          <ul className="list-disc pl-6 space-y-2">
-            {steps.map((item, idx) => (
-              <li key={idx}>
-                <strong>{item.step}:</strong> {item.details}
-              </li>
-            ))}
-          </ul>
+            Start Pathway
+          </button>
         </div>
-      )}
+
+        {/* Future countries can go here */}
+        <div className="bg-white p-6 rounded shadow opacity-50">
+          <h3 className="text-xl font-semibold mb-2">Coming Soon</h3>
+          <p className="text-sm text-gray-600">
+            More country playbooks will be added.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
-
-// =================== App Component ===================
-//function App() {
-//  return (
-//    <div className="App">
-//      <CountryPlaybook />
-//    </div>
-//  );
-//}
-
 
 
 function PlaybookCard({ country, bullets }) {
