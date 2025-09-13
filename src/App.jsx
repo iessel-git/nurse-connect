@@ -1025,6 +1025,9 @@ function EmployerFlow({ onBack, setMessage }) {
 
 
 
+//import React, { useState, useRef, useEffect } from "react";
+//import "./App.css"; // Tailwind or your custom CSS
+
 // =================== Country Playbooks Data ===================
 const countryPlaybooks = {
   "United States": [
@@ -1139,6 +1142,17 @@ function CountryPlaybook() {
     </div>
   );
 }
+
+// =================== App Component ===================
+function App() {
+  return (
+    <div className="App">
+      <CountryPlaybook />
+    </div>
+  );
+}
+
+
 
 function PlaybookCard({ country, bullets }) {
   return (
