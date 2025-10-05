@@ -304,8 +304,8 @@ function App() {
           </div>
           <div>
             <h4 className="font-medium">Contact</h4>
-            <p className="text-sm text-gray-700 mt-2">hello@nurseconnect.example</p>
-            <p className="text-sm text-gray-700">+1 (555) 123-4567</p>
+            <p className="text-sm text-gray-700 mt-2">info@nurseconnectcare.com</p>
+            <p className="text-sm text-gray-700">+1 (614) 732-7233</p>
           </div>
         </div>
         <div className="text-center text-xs text-gray-400 py-4">© {new Date().getFullYear()} Nurse Connect — All rights reserved</div>
